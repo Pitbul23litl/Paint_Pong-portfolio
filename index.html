@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08090c">
+  <meta name="description" content="Paint_Pong — digital artist, animator, compositor, designer and musician. Портфолио визуальных и музыкальных работ.">
+  <meta property="og:title" content="Paint_Pong — Creative Portfolio">
+  <meta property="og:description" content="Compositing · Animation · Design · Music · Voice">
+  <meta property="og:type" content="website">
+  <title>Paint_Pong — Creative Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="cursor-glow" aria-hidden="true"></div>
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress"><span></span></div>
+
+  <header class="site-header">
+    <a class="brand-mini magnetic" href="#home" aria-label="Paint_Pong — главная">
+      <img src="assets/brand/logo.png" alt="Paint_Pong logo">
+      <span>PAINT_PONG</span>
+    </a>
+    <nav class="nav" aria-label="Основная навигация">
+      <a class="nav-link active" href="#home">Главная</a>
+      <a class="nav-link" href="#design">Дизайн</a>
+      <a class="nav-link" href="#animation">Анимация</a>
+      <a class="nav-link" href="#music">Музыка</a>
+      <a class="nav-link" href="#youtube">YouTube</a>
+    </nav>
+    <a class="header-cta magnetic" href="#youtube"><span>CONTACT / WORK</span><i>↗</i></a>
+  </header>
+
+  <main>
+    <section id="home" class="hero section">
+      <div class="hero-bg-orbit orbit-a"></div>
+      <div class="hero-bg-orbit orbit-b"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span class="dot"></span> DIGITAL ARTIST · CREATIVE GENERALIST</p>
+        <h1>PAINT<span>_</span><br>PONG<span class="outline">.</span></h1>
+        <p class="hero-sub">Создаю персонажей, миры, анимации, музыку и композитинг — соединяя визуальный дизайн с движением и звуком.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary magnetic" href="#design">Смотреть работы <span>↓</span></a>
+          <a class="btn btn-ghost magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">YouTube <span>↗</span></a>
+        </div>
+        <div class="hero-stats">
+          <div><strong>COMPOSITING</strong><span>Visual effects</span></div>
+          <div><strong>ANIMATION</strong><span>Motion & storytelling</span></div>
+          <div><strong>AUDIO</strong><span>Music & voice</span></div>
+        </div>
+      </div>
+      <div class="hero-art reveal reveal-delay">
+        <div class="art-ring ring-1"></div><div class="art-ring ring-2"></div><div class="art-ring ring-3"></div>
+        <div class="logo-stage float">
+          <img src="assets/brand/logo.png" alt="Paint_Pong">
+        </div>
+        <div class="floating-label label-top">ART / MOTION / SOUND</div>
+        <div class="floating-label label-side">SCROLL TO EXPLORE ↓</div>
+        <div class="signal-card glass tilt-card">
+          <span class="signal-dot"></span>
+          <small>CREATIVE SIGNAL</small>
+          <strong>LIVE</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="marquee-band" aria-hidden="true">
+      <div class="marquee-track">
+        <span>CHARACTERS</span><b>✦</b><span>WORLDBUILDING</span><b>✦</b><span>COMPOSITING</span><b>✦</b><span>MOTION</span><b>✦</b><span>MUSIC</span><b>✦</b>
+        <span>CHARACTERS</span><b>✦</b><span>WORLDBUILDING</span><b>✦</b><span>COMPOSITING</span><b>✦</b><span>MOTION</span><b>✦</b><span>MUSIC</span><b>✦</b>
+      </div>
+    </section>
+
+    <section class="about section slim" id="about">
+      <div class="section-index">01 / ABOUT</div>
+      <div class="about-layout">
+        <div class="about-title reveal"><p class="eyebrow">WHO IS PAINT_PONG?</p><h2>Один автор.<br><em>Много медиа.</em></h2></div>
+        <div class="about-text reveal reveal-delay">
+          <p>Paint_Pong — независимый автор, который работает на стыке иллюстрации, анимации, дизайна, композитинга и музыки.</p>
+          <p>Вместо одной специализации я собираю проекты целиком: от идеи и визуального языка до движения, звука и финального композа.</p>
+          <div class="tags"><span>2D / 3D</span><span>COMPOSITING</span><span>CHARACTER DESIGN</span><span>WORLD DESIGN</span><span>MUSIC</span><span>VOICE</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="design" class="section portfolio-section">
+      <div class="section-heading reveal"><div><div class="section-index">02 / DESIGN</div><p class="eyebrow">SELECTED VISUALS</p><h2>Дизайн</h2></div><span class="section-note">Персонажи / Биомы</span></div>
+
+      <div class="subheading reveal"><h3>Персонажи</h3><span>CHARACTERS</span></div>
+      <div class="character-grid">
+        <a class="character-card tilt-card reveal" href="assets/characters/bogle.png" target="_blank"><img src="assets/characters/bogle.png" alt="Bogle"><div class="card-shine"></div><span class="card-num">01</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/chacatolo.png" target="_blank"><img src="assets/characters/chacatolo.png" alt="Chacatolo"><div class="card-shine"></div><span class="card-num">02</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/cre'eepstalic.png" target="_blank"><img src="assets/characters/cre'eepstalic.png" alt="Cre'eepstalic"><div class="card-shine"></div><span class="card-num">03</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/knighTss.png" target="_blank"><img src="assets/characters/knighTss.png" alt="KnighTss"><div class="card-shine"></div><span class="card-num">04</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/kvaraban.png" target="_blank"><img src="assets/characters/kvaraban.png" alt="Kvaraban"><div class="card-shine"></div><span class="card-num">05</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/panitoor.png" target="_blank"><img src="assets/characters/panitoor.png" alt="Panitoor"><div class="card-shine"></div><span class="card-num">06</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/werdo.png" target="_blank"><img src="assets/characters/werdo.png" alt="Werdo"><div class="card-shine"></div><span class="card-num">07</span></a>
+        <a class="character-card tilt-card reveal" href="assets/characters/zom'jelly.png" target="_blank"><img src="assets/characters/zom'jelly.png" alt="Zom'jelly"><div class="card-shine"></div><span class="card-num">08</span></a>
+      </div>
+
+      <div class="subheading reveal biome-heading"><h3>Биомы</h3><span>WORLDS</span></div>
+      <div class="biome-grid">
+        <a class="biome-card tilt-card reveal" href="assets/biomes/crystal island.jpg" target="_blank"><img src="assets/biomes/crystal island.jpg" alt="Crystal Island"><div class="biome-overlay"><span>CRYSTAL ISLAND</span><b>↗</b></div></a>
+        <a class="biome-card tilt-card reveal" href="assets/biomes/poison islet.jpg" target="_blank"><img src="assets/biomes/poison islet.jpg" alt="Poison Islet"><div class="biome-overlay"><span>POISON ISLET</span><b>↗</b></div></a>
+        <a class="biome-card tilt-card reveal" href="assets/biomes/start islet.jpg" target="_blank"><img src="assets/biomes/start islet.jpg" alt="Start Islet"><div class="biome-overlay"><span>START ISLET</span><b>↗</b></div></a>
+      </div>
+    </section>
+
+    <section id="animation" class="section media-section">
+      <div class="section-heading reveal"><div><div class="section-index">03 / ANIMATION</div><p class="eyebrow">MOTION / STORY</p><h2>Анимация</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong/search?query=animated" target="_blank" rel="noreferrer">Все Animated →</a></div>
+      <div class="video-list" id="animated-list">
+        <a class="video-row reveal" href="https://www.youtube.com/@paint_pong/search?query=animated" target="_blank" rel="noreferrer"><span class="video-index">01</span><div class="video-thumb gradient-thumb"><span>ANIMATED</span></div><div class="video-meta"><h3>Animated works</h3><p>Открыть подборку видео с тегом animated</p></div><span class="video-arrow">↗</span></a>
+        <a class="video-row reveal" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer"><span class="video-index">02</span><div class="video-thumb gradient-thumb alt"><span>PROCESS</span></div><div class="video-meta"><h3>Animation & process</h3><p>Все ролики на канале</p></div><span class="video-arrow">↗</span></a>
+      </div>
+      <div class="media-callout reveal"><span class="pulse"></span><p>Новые работы можно добавлять сюда без переделки дизайна — достаточно изменить массив видео в <code>app.js</code>.</p></div>
+    </section>
+
+    <section id="music" class="section media-section music-section">
+      <div class="section-heading reveal"><div><div class="section-index">04 / MUSIC</div><p class="eyebrow">AUDIO / SOUND</p><h2>Музыка</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong/search?query=full%20song" target="_blank" rel="noreferrer">Слушать →</a></div>
+      <div class="music-layout">
+        <div class="vinyl-panel reveal tilt-card"><div class="vinyl"><div class="vinyl-hole"></div><span>PP</span></div><div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>FULL SONG · COVER · REMIX</p></div>
+        <div class="music-links reveal reveal-delay">
+          <a class="music-row magnetic" href="https://www.youtube.com/@paint_pong/search?query=full%20song" target="_blank" rel="noreferrer"><span>01</span><strong>FULL SONG</strong><i>↗</i></a>
+          <a class="music-row magnetic" href="https://www.youtube.com/@paint_pong/search?query=cover" target="_blank" rel="noreferrer"><span>02</span><strong>COVER</strong><i>↗</i></a>
+          <a class="music-row magnetic" href="https://www.youtube.com/@paint_pong/search?query=remix" target="_blank" rel="noreferrer"><span>03</span><strong>REMIX</strong><i>↗</i></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="youtube" class="section youtube-section">
+      <div class="section-heading reveal"><div><div class="section-index">05 / YOUTUBE</div><p class="eyebrow">LATEST FROM THE CHANNEL</p><h2>YouTube</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">@paint_pong ↗</a></div>
+      <div class="youtube-feature reveal">
+        <div class="youtube-copy"><span class="live-chip"><i></i> CHANNEL FEED</span><h3>Последние работы<br>Paint_Pong</h3><p>Секция автоматически пытается подтянуть свежие видео с канала без API-ключа. Если браузер блокирует чтение ленты, остаётся кнопка перехода прямо на YouTube.</p><a class="btn btn-primary magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">Открыть канал ↗</a></div>
+        <div class="youtube-feed" id="youtube-feed"><div class="feed-loading"><span class="spinner"></span><p>Загружаю последние ролики…</p></div></div>
+      </div>
+    </section>
+
+    <section class="closing section slim">
+      <div class="closing-orb"></div>
+      <p class="eyebrow reveal">MAKE SOMETHING WORTH WATCHING</p>
+      <h2 class="reveal reveal-delay">Идея может<br><em>заиграть.</em></h2>
+      <a class="btn btn-primary magnetic reveal reveal-delay-2" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">Связаться через YouTube ↗</a>
+    </section>
+  </main>
+
+  <footer class="footer"><span>© <span id="year"></span> PAINT_PONG</span><span>COMPOSITING · ANIMATION · DESIGN · MUSIC</span><a href="#home">BACK TO TOP ↑</a></footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
