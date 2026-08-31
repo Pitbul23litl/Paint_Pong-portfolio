@@ -1,26 +1,32 @@
 # Paint_Pong Portfolio
 
-Статический сайт-портфолио для GitHub Pages.
+Готовый статический сайт для GitHub Pages.
 
-## Что уже внутри
-- адаптивная одностраничная структура;
-- крупный брендовый hero с логотипом из архива;
-- анимации скролла, hover, параллакс-подобное движение, частицы, marquee и 3D tilt;
-- разделы: Главная, Дизайн, Анимация, Музыка, YouTube;
-- персонажи и биомы из исходного архива;
-- ссылки на YouTube-поиск для `animated`, `full song`, `cover`, `remix`;
-- блок последних YouTube-видео с попыткой публичной загрузки через CORS-прокси и безопасным fallback.
+## Публикация
 
-## Публикация через GitHub Pages
-1. Создай новый публичный репозиторий на GitHub.
-2. Загрузи **все файлы и папки** из этой директории.
-3. В GitHub открой `Settings → Pages`.
-4. В `Build and deployment` выбери `Deploy from a branch`, ветку `main`, папку `/ (root)`.
-5. Сохрани. Через некоторое время GitHub выдаст публичную ссылку.
+1. Загрузите всё содержимое этой папки в корень публичного GitHub-репозитория.
+2. В **Settings → Pages** выберите **Deploy from a branch → main → / (root)**.
+3. Сохраните.
 
-## Где менять YouTube
-В начале `app.js` находится:
-```js
-const CHANNEL_URL = 'https://www.youtube.com/@paint_pong';
-```
-Если у канала поменяется handle, достаточно заменить эту строку.
+## Автообновление YouTube
+
+В репозитории уже есть `.github/workflows/youtube-feed.yml`.
+
+Он каждые 6 часов получает самый свежий ролик с `https://www.youtube.com/@paint_pong/videos` через `yt-dlp` и обновляет `latest.json`. Блок **YouTube / Последняя работа** на сайте читает этот JSON и показывает превью, название и ссылку на ролик.
+
+Можно также запустить workflow вручную через **Actions → Update latest YouTube upload → Run workflow**.
+
+## Аудиотрек
+
+Плеер и визуализатор уже готовы. Положите исходный аудиофайл в:
+
+`assets/audio/paint-pong-track.mp3`
+
+Файл должен иметь именно это имя или нужно изменить путь в `index.html`. Визуализатор использует Web Audio API и начинает реагировать на спектр после нажатия Play.
+
+## Обновление работ
+
+Изображения находятся в `assets/characters/` и `assets/biomes/`. Ссылки на анимации и музыку находятся непосредственно в `index.html`.
+
+### Included audio
+The portfolio now includes the supplied track at `assets/audio/paint-pong-track.mp3`.

@@ -1,80 +1,95 @@
+document.body.classList.add('js-ready');
 const CHANNEL_URL = 'https://www.youtube.com/@paint_pong';
 
-// -------- subtle interactive layer --------
+// ---------- capability-aware motion ----------
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = matchMedia('(pointer: coarse)').matches || innerWidth < 850;
+
 const cursorGlow = document.querySelector('.cursor-glow');
-let pointerX = innerWidth / 2, pointerY = innerHeight / 2, glowX = pointerX, glowY = pointerY;
-window.addEventListener('pointermove', e => { pointerX=e.clientX; pointerY=e.clientY; });
-function animateGlow(){ glowX += (pointerX-glowX)*.09; glowY += (pointerY-glowY)*.09; cursorGlow.style.left=glowX+'px'; cursorGlow.style.top=glowY+'px'; requestAnimationFrame(animateGlow); }
-animateGlow();
+if (cursorGlow && !isTouch && !prefersReduced) {
+  let pointerX = innerWidth / 2, pointerY = innerHeight / 2, glowX = pointerX, glowY = pointerY;
+  window.addEventListener('pointermove', e => { pointerX=e.clientX; pointerY=e.clientY; }, {passive:true});
+  const animateGlow=()=>{glowX+=(pointerX-glowX)*.09;glowY+=(pointerY-glowY)*.09;cursorGlow.style.left=glowX+'px';cursorGlow.style.top=glowY+'px';requestAnimationFrame(animateGlow)};
+  animateGlow();
+} else if (cursorGlow) cursorGlow.style.display='none';
 
-// magnetic hover — lightweight, no dependencies
-for(const el of document.querySelectorAll('.magnetic')){
-  el.addEventListener('pointermove', e=>{
-    const r=el.getBoundingClientRect(), x=e.clientX-(r.left+r.width/2), y=e.clientY-(r.top+r.height/2);
-    el.style.transform=`translate(${x*.07}px,${y*.07}px)`;
-  });
-  el.addEventListener('pointerleave',()=>el.style.transform='');
+if (!isTouch && !prefersReduced) {
+  for(const el of document.querySelectorAll('.magnetic')){
+    el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect(),x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2);el.style.transform=`translate(${x*.07}px,${y*.07}px)`},{passive:true});
+    el.addEventListener('pointerleave',()=>el.style.transform='');
+  }
+  for(const card of document.querySelectorAll('.tilt-card')){
+    card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;card.style.transform=`perspective(850px) rotateX(${y*-4}deg) rotateY(${x*5}deg) translateY(-2px)`},{passive:true});
+    card.addEventListener('pointerleave',()=>card.style.transform='');
+  }
 }
 
-// tilt cards
-for(const card of document.querySelectorAll('.tilt-card')){
-  card.addEventListener('pointermove',e=>{
-    if(innerWidth<850) return;
-    const r=card.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
-    card.style.transform=`perspective(850px) rotateX(${y*-4}deg) rotateY(${x*5}deg) translateY(-2px)`;
-  });
-  card.addEventListener('pointerleave',()=>card.style.transform='');
-}
+// ---------- calm ambient canvas on desktop; CSS ambient field on touch ----------
+const canvas=document.getElementById('particles');
+if (canvas && !isTouch && !prefersReduced) {
+  const ctx=canvas.getContext('2d'); let dots=[];
+  function resizeCanvas(){
+    const dpr=Math.min(devicePixelRatio||1,1.75); canvas.width=innerWidth*dpr; canvas.height=innerHeight*dpr; canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; ctx.setTransform(dpr,0,0,dpr,0,0);
+    dots=Array.from({length:Math.min(55,Math.floor(innerWidth/26))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.12,vy:(Math.random()-.5)*.12,r:Math.random()*.9+.25}));
+  }
+  function loop(){ctx.clearRect(0,0,innerWidth,innerHeight);for(const d of dots){d.x=(d.x+d.vx+innerWidth)%innerWidth;d.y=(d.y+d.vy+innerHeight)%innerHeight;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(180,205,225,.24)';ctx.fill()}requestAnimationFrame(loop)}
+  resizeCanvas();loop();addEventListener('resize',resizeCanvas,{passive:true});
+} else if (canvas) canvas.style.display='none';
 
-// canvas particles
-const canvas=document.getElementById('particles'), ctx=canvas.getContext('2d');
-let dots=[];
-function resizeCanvas(){canvas.width=innerWidth*devicePixelRatio; canvas.height=innerHeight*devicePixelRatio; canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); dots=Array.from({length:Math.min(85,Math.floor(innerWidth/18))},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.5+.2}));}
-function particleLoop(){ctx.clearRect(0,0,innerWidth,innerHeight); for(const d of dots){d.x=(d.x+d.vx+innerWidth)%innerWidth;d.y=(d.y+d.vy+innerHeight)%innerHeight;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fillStyle='rgba(150,190,220,.35)';ctx.fill();} requestAnimationFrame(particleLoop)}
-resizeCanvas(); particleLoop(); addEventListener('resize',resizeCanvas);
-
-// reveal on scroll
-const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
-document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// Reveal works reliably on touch too; on very slow browsers avoid keeping elements hidden.
+const revealItems=[...document.querySelectorAll('.reveal')];
+const revealIO = new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');revealIO.unobserve(e.target)}}),{threshold:isTouch?.04:.12,rootMargin:'0px 0px -8% 0px'});
+revealItems.forEach((el,i)=>{el.style.setProperty('--reveal-index',i%8);revealIO.observe(el)});
+setTimeout(()=>revealItems.forEach(el=>el.classList.add('in')),4500);
 
 // active navigation + scroll progress
 const sections=[...document.querySelectorAll('main section[id]')], navLinks=[...document.querySelectorAll('.nav-link')], progress=document.querySelector('.scroll-progress span');
-addEventListener('scroll',()=>{
-  const total=document.documentElement.scrollHeight-innerHeight; progress.style.width=(total?scrollY/total*100:0)+'%';
-  let current='home'; for(const s of sections){if(scrollY+innerHeight*.3>=s.offsetTop) current=s.id;}
-  navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));
-},{passive:true});
+addEventListener('scroll',()=>{const total=document.documentElement.scrollHeight-innerHeight;if(progress)progress.style.width=(total?scrollY/total*100:0)+'%';let current='home';for(const s of sections){if(scrollY+innerHeight*.3>=s.offsetTop)current=s.id}navLinks.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+current));},{passive:true});
+const year=document.getElementById('year');if(year)year.textContent=new Date().getFullYear();
 
-document.getElementById('year').textContent=new Date().getFullYear();
+// ---------- latest YouTube upload generated by GitHub Actions ----------
+async function loadLatest(){
+  const card=document.getElementById('latest-video'), thumb=document.getElementById('latest-thumbnail'), title=document.getElementById('latest-title'), date=document.getElementById('latest-date');
+  if(!card||!thumb||!title||!date)return;
+  try{
+    const res=await fetch(`latest.json?ts=${Date.now()}`,{cache:'no-store'}); if(!res.ok)throw new Error('feed unavailable');
+    const v=await res.json(); if(!v?.id)throw new Error('empty feed');
+    card.href=v.url||`https://www.youtube.com/watch?v=${v.id}`; thumb.src=v.thumbnail||`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`; title.textContent=v.title||'Последняя работа';
+    date.textContent=v.published?new Date(v.published).toLocaleDateString('ru-RU',{day:'2-digit',month:'long',year:'numeric'}).toUpperCase():'LATEST UPLOAD';
+  }catch(e){title.textContent='Новая работа — на YouTube';date.textContent='ОТКРОЙТЕ КАНАЛ';}
+}
+loadLatest();
 
-// -------- YouTube latest feed without an API key --------
-// GitHub Pages cannot safely call YouTube directly due to CORS in many browsers.
-// The first proxy is tried, followed by a second fallback; if both fail the UI offers a direct channel link.
-function uniq(arr){return [...new Map(arr.map(x=>[x.id,x])).values()];}
-function extractVideos(html){
-  const out=[]; const idRe=/(?:watch\?v=|\"videoId\":\")([A-Za-z0-9_-]{11})/g; let m;
-  while((m=idRe.exec(html)) && out.length<10){
-    const id=m[1]; if(out.some(v=>v.id===id)) continue;
-    const start=Math.max(0,m.index-1200), chunk=html.slice(start,m.index+1800);
-    let title='Paint_Pong — видео';
-    const tm=chunk.match(/\"text\":\"([^\"]+)/);
-    if(tm) title=tm[1].replace(/\\u0026/g,'&').replace(/\\"/g,'');
-    out.push({id,title,url:`https://www.youtube.com/watch?v=${id}`});
+// ---------- audio-reactive record ----------
+const audio=document.getElementById('portfolio-audio'), viz=document.getElementById('audio-visualizer'), status=document.getElementById('audio-status');
+let audioCtx, analyser, sourceNode, dataArray, vizRAF;
+function setupAudio(){
+  if(audioCtx || !audio)return;
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)(); analyser=audioCtx.createAnalyser(); analyser.fftSize=256; analyser.smoothingTimeConstant=.82; dataArray=new Uint8Array(analyser.frequencyBinCount);
+    sourceNode=audioCtx.createMediaElementSource(audio); sourceNode.connect(analyser); analyser.connect(audioCtx.destination);
+    drawAudio();
+  }catch(e){status.textContent='AUDIO PLAYER READY';}
+}
+function drawAudio(){
+  if(!viz)return; const dpr=Math.min(devicePixelRatio||1,2), rect=viz.getBoundingClientRect(); if(!rect.width||!rect.height){vizRAF=requestAnimationFrame(drawAudio);return}
+  if(viz.width!==Math.round(rect.width*dpr)||viz.height!==Math.round(rect.height*dpr)){viz.width=rect.width*dpr;viz.height=rect.height*dpr;}
+  const c=viz.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,rect.width,rect.height);
+  const cx=rect.width/2,cy=rect.height/2,maxR=Math.min(rect.width,rect.height)*.43;
+  if(analyser){analyser.getByteFrequencyData(dataArray);let bass=0;for(let i=0;i<12;i++)bass+=dataArray[i]||0;bass=(bass/12)/255;} else bass=.08;
+  const bars=Math.min(72,dataArray?.length||72);
+  for(let i=0;i<bars;i++){
+    const a=(i/bars)*Math.PI*2, idx=Math.floor(i*(dataArray?.length||1)/bars), amp=(dataArray?.[idx]||14)/255;
+    const inner=maxR*.68, outer=inner+amp*maxR*.48+bass*8;
+    const x1=cx+Math.cos(a)*inner, y1=cy+Math.sin(a)*inner, x2=cx+Math.cos(a)*outer, y2=cy+Math.sin(a)*outer;
+    c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.lineWidth=1.25+amp*1.4; c.strokeStyle=i%9===0?'rgba(216,122,57,.72)':'rgba(75,180,255,.54)'; c.stroke();
   }
-  return uniq(out).slice(0,6);
+  c.beginPath();c.arc(cx,cy,maxR*(.56+bass*.06),0,Math.PI*2);c.strokeStyle=`rgba(255,255,255,${.08+bass*.12})`;c.lineWidth=1;c.stroke();
+  vizRAF=requestAnimationFrame(drawAudio);
 }
-async function getFeed(){
-  const target=encodeURIComponent(CHANNEL_URL+'/videos');
-  const proxies=[`https://api.allorigins.win/raw?url=${target}`,`https://corsproxy.io/?url=${target}`];
-  for(const url of proxies){
-    try{const res=await fetch(url,{signal:AbortSignal.timeout(8000)}); if(!res.ok) continue; const html=await res.text(); const vids=extractVideos(html); if(vids.length) return vids;}catch(e){}
-  }
-  return [];
+if(audio){
+  audio.addEventListener('play',()=>{setupAudio(); if(audioCtx?.state==='suspended')audioCtx.resume(); if(status)status.textContent='PLAYING · LIVE SPECTRUM';});
+  audio.addEventListener('pause',()=>{if(status)status.textContent='PAUSED · PAINT_PONG ORIGINAL'});
+  audio.addEventListener('error',()=>{if(status)status.textContent='AUDIO FILE READY';});
+  drawAudio();
 }
-function renderFeed(videos){
-  const box=document.getElementById('youtube-feed');
-  if(!videos.length){box.innerHTML=`<div class="feed-fallback"><div class="fallback-icon">▶</div><h3>Открой свежие ролики на YouTube</h3><p>Автоматическая выборка зависит от доступности публичной YouTube-страницы. Сам сайт остаётся полностью рабочим даже без API.</p><a class="btn btn-primary magnetic" href="${CHANNEL_URL}" target="_blank" rel="noreferrer">@paint_pong ↗</a></div>`; return;}
-  box.innerHTML=videos.map((v,i)=>`<a class="yt-card" href="${v.url}" target="_blank" rel="noreferrer"><img loading="lazy" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt=""><div><h4>${i===0?'LATEST · ':''}${escapeHTML(v.title)}</h4><small>WATCH ON YOUTUBE ↗</small></div></a>`).join('');
-}
-function escapeHTML(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
-getFeed().then(renderFeed);

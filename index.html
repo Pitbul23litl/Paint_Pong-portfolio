@@ -17,7 +17,7 @@
 <body>
   <div class="cursor-glow" aria-hidden="true"></div>
   <canvas id="particles" aria-hidden="true"></canvas>
-  <div class="grain" aria-hidden="true"></div>
+  <div class="ambient-field" aria-hidden="true"></div>
   <div class="scroll-progress"><span></span></div>
 
   <header class="site-header">
@@ -112,22 +112,40 @@
     </section>
 
     <section id="animation" class="section media-section">
-      <div class="section-heading reveal"><div><div class="section-index">03 / ANIMATION</div><p class="eyebrow">MOTION / STORY</p><h2>Анимация</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong/search?query=animated" target="_blank" rel="noreferrer">Все Animated →</a></div>
+      <div class="section-heading reveal"><div><div class="section-index">03 / ANIMATION</div><p class="eyebrow">MOTION / STORY</p><h2>Анимация</h2></div></div>
       <div class="video-list" id="animated-list">
-        <a class="video-row reveal" href="https://www.youtube.com/@paint_pong/search?query=animated" target="_blank" rel="noreferrer"><span class="video-index">01</span><div class="video-thumb gradient-thumb"><span>ANIMATED</span></div><div class="video-meta"><h3>Animated works</h3><p>Открыть подборку видео с тегом animated</p></div><span class="video-arrow">↗</span></a>
-        <a class="video-row reveal" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer"><span class="video-index">02</span><div class="video-thumb gradient-thumb alt"><span>PROCESS</span></div><div class="video-meta"><h3>Animation & process</h3><p>Все ролики на канале</p></div><span class="video-arrow">↗</span></a>
+        <a class="video-row reveal" href="https://youtu.be/AefJH32-0jg" target="_blank" rel="noreferrer">
+          <span class="video-index">01</span><div class="video-thumb image-thumb"><img src="https://i.ytimg.com/vi/AefJH32-0jg/hqdefault.jpg" alt=""><span>ANIMATED</span></div>
+          <div class="video-meta"><h3>Poison Islet — Auglur &amp; Dragong</h3><p>MSM (Fanmade)</p></div><span class="video-arrow">↗</span>
+        </a>
+        <a class="video-row reveal reveal-delay" href="https://youtu.be/97J0hGnYFRU" target="_blank" rel="noreferrer">
+          <span class="video-index">02</span><div class="video-thumb image-thumb"><img src="https://i.ytimg.com/vi/97J0hGnYFRU/hqdefault.jpg" alt=""><span>ANIMATED</span></div>
+          <div class="video-meta"><h3>NEW MYTHICAL MONSTER — PANITOOR</h3><p>Fanmade</p></div><span class="video-arrow">↗</span>
+        </a>
+        <a class="video-row reveal reveal-delay-2" href="https://youtu.be/KyliP7R9RaM" target="_blank" rel="noreferrer">
+          <span class="video-index">03</span><div class="video-thumb image-thumb"><img src="https://i.ytimg.com/vi/KyliP7R9RaM/hqdefault.jpg" alt=""><span>ANIMATED</span></div>
+          <div class="video-meta"><h3>Poison Islet — Fung Pray, Blarret &amp; Bass</h3><p>MSM (Fanmade)</p></div><span class="video-arrow">↗</span>
+        </a>
       </div>
-      <div class="media-callout reveal"><span class="pulse"></span><p>Новые работы можно добавлять сюда без переделки дизайна — достаточно изменить массив видео в <code>app.js</code>.</p></div>
     </section>
 
     <section id="music" class="section media-section music-section">
-      <div class="section-heading reveal"><div><div class="section-index">04 / MUSIC</div><p class="eyebrow">AUDIO / SOUND</p><h2>Музыка</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong/search?query=full%20song" target="_blank" rel="noreferrer">Слушать →</a></div>
+      <div class="section-heading reveal"><div><div class="section-index">04 / MUSIC</div><p class="eyebrow">AUDIO / SOUND</p><h2>Музыка</h2></div></div>
       <div class="music-layout">
-        <div class="vinyl-panel reveal tilt-card"><div class="vinyl"><div class="vinyl-hole"></div><span>PP</span></div><div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><p>FULL SONG · COVER · REMIX</p></div>
+        <div class="vinyl-panel reveal tilt-card">
+          <div class="audio-visual"><canvas id="audio-visualizer" aria-hidden="true"></canvas><div class="visual-core"><span class="core-ring"></span><span class="core-mark">PP</span></div></div>
+          <div class="eq"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="audio-player">
+            <audio id="portfolio-audio" preload="metadata" controls>
+              <source src="assets/audio/paint-pong-track.mp3" type="audio/mpeg">
+            </audio>
+            <div class="audio-status" id="audio-status">PAINT_PONG ORIGINAL · AUDIO VISUALIZER</div>
+          </div>
+        </div>
         <div class="music-links reveal reveal-delay">
-          <a class="music-row magnetic" href="https://www.youtube.com/@paint_pong/search?query=full%20song" target="_blank" rel="noreferrer"><span>01</span><strong>FULL SONG</strong><i>↗</i></a>
-          <a class="music-row magnetic" href="https://www.youtube.com/@paint_pong/search?query=cover" target="_blank" rel="noreferrer"><span>02</span><strong>COVER</strong><i>↗</i></a>
-          <a class="music-row magnetic" href="https://www.youtube.com/@paint_pong/search?query=remix" target="_blank" rel="noreferrer"><span>03</span><strong>REMIX</strong><i>↗</i></a>
+          <a class="music-row magnetic" href="https://youtu.be/S8CnSNtobD4" target="_blank" rel="noreferrer"><span>01</span><strong>CRYSTAL ISLET — EPIC RECOMPOSITION</strong><i>↗</i></a>
+          <a class="music-row magnetic" href="https://youtu.be/pJbfr26djBM" target="_blank" rel="noreferrer"><span>02</span><strong>DESERTED HARBOR — FULL SONG</strong><i>↗</i></a>
+          <a class="music-row magnetic" href="https://youtu.be/OVZ21X289LE" target="_blank" rel="noreferrer"><span>03</span><strong>SHADOW ISLET — REMIX</strong><i>↗</i></a>
         </div>
       </div>
     </section>
@@ -135,8 +153,11 @@
     <section id="youtube" class="section youtube-section">
       <div class="section-heading reveal"><div><div class="section-index">05 / YOUTUBE</div><p class="eyebrow">LATEST FROM THE CHANNEL</p><h2>YouTube</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">@paint_pong ↗</a></div>
       <div class="youtube-feature reveal">
-        <div class="youtube-copy"><span class="live-chip"><i></i> CHANNEL FEED</span><h3>Последние работы<br>Paint_Pong</h3><p>Секция автоматически пытается подтянуть свежие видео с канала без API-ключа. Если браузер блокирует чтение ленты, остаётся кнопка перехода прямо на YouTube.</p><a class="btn btn-primary magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">Открыть канал ↗</a></div>
-        <div class="youtube-feed" id="youtube-feed"><div class="feed-loading"><span class="spinner"></span><p>Загружаю последние ролики…</p></div></div>
+        <div class="youtube-copy"><span class="live-chip"><i></i> CHANNEL FEED</span><h3>Последняя работа<br>Paint_Pong</h3><p>Превью, название и ссылка на самый свежий ролик обновляются автоматически через GitHub Actions. Новое видео появится на сайте после ближайшего обновления ленты.</p><a class="btn btn-primary magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">Открыть канал ↗</a></div>
+        <a class="latest-video-card" id="latest-video" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">
+          <div class="latest-media"><img id="latest-thumbnail" src="assets/brand/logo.png" alt="Paint_Pong"><span class="latest-play">▶</span><span class="latest-badge">LATEST</span></div>
+          <div class="latest-info"><div><small id="latest-date">PAINT_PONG / YOUTUBE</small><h3 id="latest-title">Загружаю последнюю работу…</h3></div><span class="video-arrow">↗</span></div>
+        </a>
       </div>
     </section>
 
