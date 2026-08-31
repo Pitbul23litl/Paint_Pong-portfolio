@@ -101,48 +101,68 @@ if (logoStage && heroLogo && !prefersReduced) {
   let raf = 0, targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
   const moveLogo = (clientX, clientY) => {
     const r = logoStage.getBoundingClientRect();
-    const x = (clientX - (r.left + r.width/2)) / (r.width/2);
-    const y = (clientY - (r.top + r.height/2)) / (r.height/2);
-    targetRY = x * 8;
-    targetRX = -y * 6;
-    if (!raf) raf = requestAnimationFrame(function animateLogo(){
+    const x = Math.max(-1,Math.min(1,(clientX - (r.left + r.width/2)) / (r.width/2)));
+    const y = Math.max(-1,Math.min(1,(clientY - (r.top + r.height/2)) / (r.height/2)));
+    targetRY = x * 8; targetRX = -y * 6;
+    if (!raf) raf=requestAnimationFrame(function tick(){
       currentRX += (targetRX-currentRX)*.15; currentRY += (targetRY-currentRY)*.15;
-      heroLogo.style.transform = `perspective(900px) rotateX(${currentRX}deg) rotateY(${currentRY}deg)`;
-      if (Math.abs(targetRX-currentRX)+Math.abs(targetRY-currentRY) > .01) raf=requestAnimationFrame(animateLogo); else raf=0;
+      if(!logoStage.classList.contains('logo-droplet')) heroLogo.style.transform=`perspective(900px) rotateX(${currentRX}deg) rotateY(${currentRY}deg)`;
+      if(Math.abs(targetRX-currentRX)+Math.abs(targetRY-currentRY)>.01) raf=requestAnimationFrame(tick); else raf=0;
     });
   };
-  logoStage.addEventListener('pointermove', e => moveLogo(e.clientX,e.clientY), {passive:true});
-  logoStage.addEventListener('pointerleave', () => { targetRX=0; targetRY=0; moveLogo(logoStage.getBoundingClientRect().left+logoStage.offsetWidth/2, logoStage.getBoundingClientRect().top+logoStage.offsetHeight/2); });
-  logoStage.addEventListener('click', e => {
-    const r = logoStage.getBoundingClientRect(), layer = logoStage.querySelector('.logo-ripple-layer');
-    if (!layer) return;
-    const x=e.clientX-r.left, y=e.clientY-r.top;
-    const ring=document.createElement('span'); ring.className='logo-ripple'; ring.style.left=x+'px'; ring.style.top=y+'px'; layer.appendChild(ring);
-    for(let i=0;i<7;i++){const s=document.createElement('span');s.className='logo-splash';s.style.left=x+'px';s.style.top=y+'px';s.style.setProperty('--a',(i*51-80)+'deg');layer.appendChild(s);}
-    setTimeout(()=>layer.replaceChildren(), 950);
+  logoStage.addEventListener('pointermove',e=>moveLogo(e.clientX,e.clientY),{passive:true});
+  logoStage.addEventListener('pointerleave',()=>moveLogo(logoStage.getBoundingClientRect().left+logoStage.offsetWidth/2,logoStage.getBoundingClientRect().top+logoStage.offsetHeight/2));
+  logoStage.addEventListener('click',e=>{
+    const filterMap=document.querySelector('#liquidLogo feDisplacementMap');
+    logoStage.classList.remove('logo-droplet'); void logoStage.offsetWidth; logoStage.classList.add('logo-droplet');
+    if(filterMap){
+      const start=performance.now(), dur=860;
+      const tick=t=>{const q=Math.min(1,(t-start)/dur); const pulse=Math.sin(q*Math.PI); filterMap.setAttribute('scale',(pulse*24).toFixed(2)); if(q<1) requestAnimationFrame(tick); else filterMap.setAttribute('scale','0')};
+      requestAnimationFrame(tick);
+    }
+    setTimeout(()=>logoStage.classList.remove('logo-droplet'),950);
   });
 }
 
-// ---------- character select / fighting-game style carousel ----------
-const characterData = [
-  ['bogle.png','Bogle'],['chacatolo.png','Chacatolo'],["cre'eepstalic.png","Cre'eepstalic"],['knighTss.png','KnighTss'],
-  ['kvaraban.png','Kvaraban'],['panitoor.png','Panitoor'],['werdo.png','Werdo'],["zom'jelly.png","Zom'jelly"]
-];
-const picker=document.getElementById('character-picker');
+// ---------- character select / smooth PNG carousel ----------
+const characterData=[['bogle.png','Bogle'],['chacatolo.png','Chacatolo'],["cre'eepstalic.png","Cre'eepstalic"],['knighTss.png','KnighTss'],['kvaraban.png','Kvaraban'],['panitoor.png','Panitoor'],['werdo.png','Werdo'],["zom'jelly.png","Zom'jelly"]];
+const picker=document.getElementById('character-picker'), stage=document.getElementById('character-stage');
 const currentImg=document.getElementById('character-current'), prevImg=document.getElementById('character-prev'), nextImg=document.getElementById('character-next');
 const mainLink=document.getElementById('character-main'), indexEl=document.getElementById('character-index'), nameEl=document.getElementById('character-name'), dots=document.getElementById('picker-dots');
-let characterIndex=0;
+let characterIndex=0, charAnimating=false;
 function charPath(i){return 'assets/characters/'+encodeURIComponent(characterData[i][0]).replace(/%2F/g,'/').replace(/%27/g,"'");}
-function renderCharacter(i, animate=true){
-  if(!picker)return; characterIndex=(i+characterData.length)%characterData.length;
-  const prev=(characterIndex-1+characterData.length)%characterData.length, next=(characterIndex+1)%characterData.length;
+function paintCharacter(i){
+  characterIndex=(i+characterData.length)%characterData.length;
+  const prev=(characterIndex-1+characterData.length)%characterData.length,next=(characterIndex+1)%characterData.length;
   currentImg.src=charPath(characterIndex); currentImg.alt=characterData[characterIndex][1]; prevImg.src=charPath(prev); nextImg.src=charPath(next);
   mainLink.href=charPath(characterIndex); indexEl.textContent=String(characterIndex+1).padStart(2,'0')+' / '+String(characterData.length).padStart(2,'0'); nameEl.textContent=characterData[characterIndex][1];
   dots?.querySelectorAll('.picker-dot').forEach((d,j)=>d.classList.toggle('active',j===characterIndex));
-  if(animate){picker.classList.remove('switching'); void picker.offsetWidth; picker.classList.add('switching'); setTimeout(()=>picker.classList.remove('switching'),700)}
 }
-if(picker && dots){characterData.forEach((_,i)=>{const b=document.createElement('button');b.className='picker-dot';b.type='button';b.setAttribute('aria-label','Персонаж '+(i+1));b.addEventListener('click',()=>renderCharacter(i));dots.appendChild(b)});renderCharacter(0,false); document.querySelector('.picker-prev')?.addEventListener('click',()=>renderCharacter(characterIndex-1)); document.querySelector('.picker-next')?.addEventListener('click',()=>renderCharacter(characterIndex+1));
-let sx=0; picker.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX},{passive:true}); picker.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>45)renderCharacter(characterIndex+(dx<0?1:-1))},{passive:true});
+function renderCharacter(target, direction=1, animate=true){
+  if(!picker||!stage||charAnimating)return;
+  target=(target+characterData.length)%characterData.length;
+  if(!animate){paintCharacter(target);return;}
+  charAnimating=true;
+  const oldSrc=currentImg.src, oldAlt=currentImg.alt;
+  const ghost=document.createElement('img'); ghost.className='char-travel-ghost'; ghost.src=oldSrc; ghost.alt='';
+  ghost.style.cssText=`position:absolute;width:${currentImg.getBoundingClientRect().width}px;height:${currentImg.getBoundingClientRect().height}px;object-fit:contain;z-index:6;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;`;
+  stage.appendChild(ghost);
+  currentImg.style.opacity='0';
+  paintCharacter(target);
+  stage.classList.remove('char-direction-prev','char-direction-next'); void stage.offsetWidth;
+  stage.classList.add(direction>0?'char-direction-next':'char-direction-prev');
+  currentImg.classList.remove('char-enter-next','char-enter-prev'); void currentImg.offsetWidth; currentImg.classList.add(direction>0?'char-enter-next':'char-enter-prev');
+  ghost.animate([
+    {transform:'translate(-50%,-50%) scale(1)',opacity:1,filter:'blur(0)'},
+    {transform:`translate(calc(-50% ${direction>0?'-':'+'} 32%),-50%) scale(.72)`,opacity:.05,filter:'blur(5px)'}
+  ],{duration:650,easing:'cubic-bezier(.16,.78,.18,1)',fill:'forwards'}).onfinish=()=>{ghost.remove();currentImg.style.opacity='';currentImg.classList.remove('char-enter-next','char-enter-prev');stage.classList.remove('char-direction-prev','char-direction-next');charAnimating=false;};
+}
+if(picker&&dots){
+  characterData.forEach((_,i)=>{const b=document.createElement('button');b.className='picker-dot';b.type='button';b.setAttribute('aria-label','Персонаж '+(i+1));b.addEventListener('click',()=>renderCharacter(i,i>characterIndex?1:-1));dots.appendChild(b)});
+  paintCharacter(0);
+  document.querySelector('.picker-prev')?.addEventListener('click',()=>renderCharacter(characterIndex-1,-1));
+  document.querySelector('.picker-next')?.addEventListener('click',()=>renderCharacter(characterIndex+1,1));
+  let sx=0; picker.addEventListener('touchstart',e=>sx=e.changedTouches[0].clientX,{passive:true}); picker.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>45)renderCharacter(characterIndex+(dx<0?1:-1),dx<0?1:-1)},{passive:true});
 }
 
 // ---------- animation section: wake the rig when entering viewport ----------
@@ -157,3 +177,23 @@ if(ytField && !prefersReduced){
   for(let i=0;i<count;i++){const p=document.createElement('span');p.className='yt-particle';p.style.left=(Math.random()*100)+'%';p.style.top=(8+Math.random()*82)+'%';p.style.setProperty('--x',((Math.random()-.5)*90)+'px');p.style.setProperty('--y',((Math.random()-.5)*70)+'px');p.style.setProperty('--d',(4+Math.random()*6)+'s');p.style.animationDelay=(-Math.random()*5)+'s';ytField.appendChild(p)}
 }
 
+
+
+// ---------- bilingual UI ----------
+const translations={
+  ru:{'nav.home':'Главная','nav.design':'Дизайн','nav.animation':'Анимация','nav.music':'Музыка','nav.youtube':'YouTube','nav.contact':'CONTACT / WORK','hero.eyebrow':'DIGITAL ARTIST · CREATIVE GENERALIST','hero.sub':'Создаю персонажей, миры, анимации, музыку и композитинг — соединяя визуальный дизайн с движением и звуком.','hero.work':'Смотреть работы','about.eyebrow':'WHO IS PAINT_PONG?','about.title1':'Один автор.','about.title2':'Много медиа.','about.p1':'Paint_Pong — независимый автор, который работает на стыке иллюстрации, анимации, дизайна, композитинга и музыки.','about.p2':'Вместо одной специализации я собираю проекты целиком: от идеи и визуального языка до движения, звука и финального композа.','design.eyebrow':'SELECTED VISUALS','design.title':'Дизайн','design.characters':'Персонажи','design.biomes':'Биомы','animation.eyebrow':'MOTION / STORY','animation.title':'Анимация','music.eyebrow':'AUDIO / SOUND','music.title':'Музыка','youtube.eyebrow':'LATEST FROM THE CHANNEL','youtube.title':'YouTube','youtube.latest1':'Последняя работа','youtube.latest2':'Paint_Pong','youtube.open':'Открыть канал','footer.top':'BACK TO TOP ↑'},
+  en:{'nav.home':'Home','nav.design':'Design','nav.animation':'Animation','nav.music':'Music','nav.youtube':'YouTube','nav.contact':'CONTACT / WORK','hero.eyebrow':'DIGITAL ARTIST · CREATIVE GENERALIST','hero.sub':'I create characters, worlds, animation, music and compositing — connecting visual design with movement and sound.','hero.work':'View work','about.eyebrow':'WHO IS PAINT_PONG?','about.title1':'One creator.','about.title2':'Many media.','about.p1':'Paint_Pong is an independent creator working across illustration, animation, design, compositing and music.','about.p2':'Instead of one specialty, I build projects end-to-end: from the idea and visual language to motion, sound and final compositing.','design.eyebrow':'SELECTED VISUALS','design.title':'Design','design.characters':'Characters','design.biomes':'Biomes','animation.eyebrow':'MOTION / STORY','animation.title':'Animation','music.eyebrow':'AUDIO / SOUND','music.title':'Music','youtube.eyebrow':'LATEST FROM THE CHANNEL','youtube.title':'YouTube','youtube.latest1':'Latest work','youtube.latest2':'Paint_Pong','youtube.open':'Open channel','footer.top':'BACK TO TOP ↑'}
+};
+function applyLanguage(lang){
+  const dict=translations[lang]||translations.ru;
+  document.documentElement.lang=lang==='en'?'en':'ru';
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const key=el.dataset.i18n;if(dict[key]!=null)el.textContent=dict[key]});
+  const toggle=document.getElementById('lang-toggle');
+  if(toggle)toggle.innerHTML=lang==='ru'?'<span class="lang-active">RU</span><span>EN</span>':'<span>RU</span><span class="lang-active">EN</span>';
+  localStorage.setItem('paintpong-lang',lang);
+}
+const langToggle=document.getElementById('lang-toggle');
+if(langToggle){let lang=localStorage.getItem('paintpong-lang')||'ru';applyLanguage(lang);langToggle.addEventListener('click',()=>applyLanguage((localStorage.getItem('paintpong-lang')||'ru')==='ru'?'en':'ru'));}
+
+// ---------- biome cursor lens ----------
+document.querySelectorAll('.biome-probe').forEach(card=>card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')},{passive:true}));

@@ -156,3 +156,53 @@ body.js-ready .reveal.in{opacity:1;transform:none}
 
 @media (max-width:1000px){.character-picker{min-height:580px;grid-template-columns:58px 1fr 58px}.character-stage{min-height:460px}.character-main{height:430px}.character-slot{height:330px}.youtube-particle-field{opacity:.6}.bone-a{left:6%}.bone-b{left:15%}.bone-c{right:6%}}
 @media (max-width:650px){.character-picker{min-height:520px;grid-template-columns:46px 1fr 46px;border-radius:20px}.character-stage{min-height:390px}.character-main{width:63%;height:360px}.character-slot{height:270px;width:44%;opacity:.18}.side-left{left:-15%}.side-right{right:-15%}.picker-arrow{width:40px;height:40px;font-size:19px}.character-meta{gap:10px;flex-wrap:wrap}.character-meta strong{font-size:20px}.character-meta small{width:100%;text-align:center}.tools-cloud span{padding:8px 9px;font-size:9px}.animation-motion-field{opacity:.3}.bone{width:110px}.motion-trail{width:180px;height:90px;left:38%}.youtube-particle-field{display:none}.yt-wave{left:58%;width:110vw;height:150px;opacity:.65}}
+
+
+/* ===== HEADER LANGUAGE SWITCH ===== */
+.header-tools{display:flex;align-items:center;gap:8px}
+.lang-toggle{display:flex;align-items:center;gap:2px;border:1px solid var(--line);border-radius:999px;padding:4px;background:rgba(255,255,255,.035);color:#7f838b;font:700 9px 'Space Grotesk';letter-spacing:.12em;cursor:pointer}
+.lang-toggle span{padding:7px 8px;border-radius:999px;transition:.3s ease}
+.lang-toggle .lang-active{background:rgba(255,255,255,.1);color:#fff;box-shadow:0 0 18px rgba(75,180,255,.06)}
+
+/* ===== LIQUID LOGO CLICK ===== */
+.logo-stage{touch-action:manipulation;overflow:visible}
+#hero-logo{transform-origin:50% 72%;filter:url(#liquidLogo);will-change:transform,filter}
+.logo-stage.logo-droplet #hero-logo{animation:logoDroplet 900ms cubic-bezier(.16,.82,.23,1) both}
+.logo-stage.logo-droplet:before{content:"";position:absolute;z-index:4;width:18%;height:28%;left:41%;top:38%;background:radial-gradient(ellipse at 50% 20%,rgba(255,255,255,.78),rgba(255,255,255,.03) 65%,transparent 70%);border-radius:50% 50% 58% 42%;pointer-events:none;animation:dropShine 700ms ease-out forwards}
+@keyframes logoDroplet{0%{transform:scale(1) rotate(0);filter:url(#liquidLogo) drop-shadow(0 30px 40px rgba(0,0,0,.35))}14%{transform:scaleX(1.06) scaleY(.9) rotate(-1deg)}30%{transform:scaleX(.9) scaleY(1.16) rotate(2deg)}44%{transform:scaleX(1.18) scaleY(.82) rotate(-1deg)}63%{transform:scaleX(.95) scaleY(1.07) rotate(1deg)}78%{transform:scaleX(1.025) scaleY(.98)}100%{transform:scale(1) rotate(0)}}
+@keyframes dropShine{0%{opacity:0;transform:scale(.4) translateY(5px)}30%{opacity:.9;transform:scale(1) translateY(0)}100%{opacity:0;transform:scale(1.8) translateY(-16px)}}
+
+/* ===== SMOOTH CHARACTER PNG TRAVEL ===== */
+.character-stage{overflow:hidden}
+.character-main,.character-slot{will-change:transform,opacity,filter}
+.character-main.char-enter-next{animation:charEnterNext 650ms cubic-bezier(.16,.78,.18,1) both}
+.character-main.char-enter-prev{animation:charEnterPrev 650ms cubic-bezier(.16,.78,.18,1) both}
+.character-stage .char-shift-left{animation:charShiftLeft 650ms cubic-bezier(.16,.78,.18,1) both}
+.character-stage .char-shift-right{animation:charShiftRight 650ms cubic-bezier(.16,.78,.18,1) both}
+@keyframes charEnterNext{0%{transform:translateX(30%) scale(.78);opacity:.2;filter:blur(5px)}55%{transform:translateX(-3%) scale(1.02);opacity:1;filter:blur(0)}100%{transform:none;opacity:1}}
+@keyframes charEnterPrev{0%{transform:translateX(-30%) scale(.78);opacity:.2;filter:blur(5px)}55%{transform:translateX(3%) scale(1.02);opacity:1;filter:blur(0)}100%{transform:none;opacity:1}}
+@keyframes charShiftLeft{0%{transform:translateY(-50%) translateX(0) scale(.78);opacity:.28}100%{transform:translateY(-50%) translateX(-42%) scale(.58);opacity:.05}}
+@keyframes charShiftRight{0%{transform:translateY(-50%) translateX(0) scale(.78);opacity:.28}100%{transform:translateY(-50%) translateX(42%) scale(.58);opacity:.05}}
+
+/* ===== BIOME WORLD SCANNER ===== */
+.biome-explorer{perspective:1200px}
+.biome-probe{isolation:isolate;transform-style:preserve-3d;cursor:zoom-in}
+.biome-probe:before{content:"";position:absolute;inset:12px;border:1px solid rgba(255,255,255,.08);border-radius:16px;z-index:2;pointer-events:none;transform:translateZ(18px);transition:.6s ease}
+.biome-probe img{transform:scale(1.01);transition:transform 1s cubic-bezier(.2,.7,.2,1),filter 1s ease}
+.biome-probe:hover img{transform:scale(1.11) translateZ(20px);filter:saturate(1.18) contrast(1.08)}
+.biome-corner{position:absolute;z-index:5;top:14px;left:16px;font:700 9px 'Space Grotesk';letter-spacing:.18em;color:rgba(255,255,255,.7)}
+.biome-reticle{position:absolute;z-index:5;right:18px;top:15px;width:28px;height:28px;border:1px solid rgba(255,255,255,.18);border-radius:50%;display:grid;place-items:center;color:rgba(255,255,255,.75);font-size:18px;transition:transform .5s ease, border-color .5s ease}
+.biome-probe:hover .biome-reticle{transform:rotate(90deg) scale(1.18);border-color:rgba(75,180,255,.5)}
+.biome-scan{position:absolute;z-index:4;left:9%;right:9%;height:1px;top:33%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);box-shadow:0 0 18px rgba(75,180,255,.24);opacity:0;transition:opacity .3s ease;animation:biomeSweep 3.2s ease-in-out infinite}
+.biome-probe:hover .biome-scan{opacity:1}
+.biome-hud{position:absolute;z-index:5;right:18px;top:54px;display:grid;gap:5px;opacity:.55;transform:translateX(8px);transition:.45s ease}
+.biome-probe:hover .biome-hud{opacity:1;transform:none}
+.biome-hud small{font:700 8px 'Space Grotesk';letter-spacing:.16em;color:#9da2aa}
+.biome-hud strong{font:600 12px 'Space Grotesk';letter-spacing:.08em;color:#fff}
+.biome-hud i{display:block;width:86px;height:2px;background:linear-gradient(90deg,rgba(75,180,255,.7),transparent);position:relative;overflow:hidden}
+.biome-hud i:after{content:"";position:absolute;left:-30%;top:0;width:30%;height:100%;background:#fff;box-shadow:0 0 8px #fff;animation:hudMeter 2.4s linear infinite}
+.biome-probe:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.12),transparent 25%),linear-gradient(180deg,transparent 55%,rgba(4,7,10,.78));z-index:1;pointer-events:none;opacity:.75}
+@keyframes biomeSweep{0%,100%{top:24%;opacity:.05}50%{top:76%;opacity:.85}}
+@keyframes hudMeter{to{left:130%}}
+
+@media(max-width:650px){.header-tools{gap:6px}.lang-toggle{font-size:8px}.lang-toggle span{padding:6px 7px}.biome-probe:before{inset:8px}.biome-hud{top:48px;right:12px}.biome-corner{top:11px;left:12px}.biome-reticle{top:10px;right:12px}.biome-probe:hover img{transform:scale(1.05)}}
