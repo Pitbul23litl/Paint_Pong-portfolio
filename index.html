@@ -56,8 +56,9 @@
       </div>
       <div class="hero-art reveal reveal-delay">
         <div class="art-ring ring-1"></div><div class="art-ring ring-2"></div><div class="art-ring ring-3"></div>
-        <div class="logo-stage float">
-          <img src="assets/brand/logo.png" alt="Paint_Pong">
+        <div class="logo-stage float" id="hero-logo-stage" aria-label="Paint_Pong logo — интерактивный">
+          <span class="logo-ripple-layer"></span>
+          <img id="hero-logo" src="assets/brand/logo.png" alt="Paint_Pong">
         </div>
         <div class="floating-label label-top">ART / MOTION / SOUND</div>
         <div class="floating-label label-side">SCROLL TO EXPLORE ↓</div>
@@ -83,7 +84,7 @@
         <div class="about-text reveal reveal-delay">
           <p>Paint_Pong — независимый автор, который работает на стыке иллюстрации, анимации, дизайна, композитинга и музыки.</p>
           <p>Вместо одной специализации я собираю проекты целиком: от идеи и визуального языка до движения, звука и финального композа.</p>
-          <div class="tags"><span>2D / 3D</span><span>COMPOSITING</span><span>CHARACTER DESIGN</span><span>WORLD DESIGN</span><span>MUSIC</span><span>VOICE</span></div>
+          <div class="tags"><span>2D / 3D</span><span>COMPOSITING</span><span>CHARACTER DESIGN</span><span>WORLD DESIGN</span><span>MUSIC</span><span>VOICE</span></div><div class="tools-cloud" aria-label="Инструменты"><span>FL Studio</span><span>Photoshop</span><span>Spine 2D</span><span>Moho</span><span>Blender</span><span>DaVinci Resolve</span></div>
         </div>
       </div>
     </section>
@@ -91,16 +92,18 @@
     <section id="design" class="section portfolio-section">
       <div class="section-heading reveal"><div><div class="section-index">02 / DESIGN</div><p class="eyebrow">SELECTED VISUALS</p><h2>Дизайн</h2></div><span class="section-note">Персонажи / Биомы</span></div>
 
-      <div class="subheading reveal"><h3>Персонажи</h3><span>CHARACTERS</span></div>
-      <div class="character-grid">
-        <a class="character-card tilt-card reveal" href="assets/characters/bogle.png" target="_blank"><img src="assets/characters/bogle.png" alt="Bogle"><div class="card-shine"></div><span class="card-num">01</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/chacatolo.png" target="_blank"><img src="assets/characters/chacatolo.png" alt="Chacatolo"><div class="card-shine"></div><span class="card-num">02</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/cre'eepstalic.png" target="_blank"><img src="assets/characters/cre'eepstalic.png" alt="Cre'eepstalic"><div class="card-shine"></div><span class="card-num">03</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/knighTss.png" target="_blank"><img src="assets/characters/knighTss.png" alt="KnighTss"><div class="card-shine"></div><span class="card-num">04</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/kvaraban.png" target="_blank"><img src="assets/characters/kvaraban.png" alt="Kvaraban"><div class="card-shine"></div><span class="card-num">05</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/panitoor.png" target="_blank"><img src="assets/characters/panitoor.png" alt="Panitoor"><div class="card-shine"></div><span class="card-num">06</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/werdo.png" target="_blank"><img src="assets/characters/werdo.png" alt="Werdo"><div class="card-shine"></div><span class="card-num">07</span></a>
-        <a class="character-card tilt-card reveal" href="assets/characters/zom'jelly.png" target="_blank"><img src="assets/characters/zom'jelly.png" alt="Zom'jelly"><div class="card-shine"></div><span class="card-num">08</span></a>
+      <div class="subheading reveal"><h3>Персонажи</h3><span>CHARACTERS / SELECT</span></div>
+      <div class="character-picker reveal" id="character-picker">
+        <button class="picker-arrow picker-prev" type="button" aria-label="Предыдущий персонаж">←</button>
+        <div class="character-stage" id="character-stage">
+          <div class="character-slot side side-left"><img id="character-prev" src="assets/characters/zom'jelly.png" alt=""></div>
+          <a class="character-main" id="character-main" href="assets/characters/bogle.png" target="_blank" rel="noreferrer"><span class="character-halo"></span><img id="character-current" src="assets/characters/bogle.png" alt="Bogle"><span class="character-scan"></span></a>
+          <div class="character-slot side side-right"><img id="character-next" src="assets/characters/chacatolo.png" alt=""></div>
+          <div class="picker-ground"></div>
+        </div>
+        <button class="picker-arrow picker-next" type="button" aria-label="Следующий персонаж">→</button>
+        <div class="character-meta"><span id="character-index">01 / 08</span><strong id="character-name">Bogle</strong><small>CLICK TO OPEN</small></div>
+        <div class="picker-dots" id="picker-dots" aria-label="Выбор персонажа"></div>
       </div>
 
       <div class="subheading reveal biome-heading"><h3>Биомы</h3><span>WORLDS</span></div>
@@ -111,8 +114,9 @@
       </div>
     </section>
 
-    <section id="animation" class="section media-section">
-      <div class="section-heading reveal"><div><div class="section-index">03 / ANIMATION</div><p class="eyebrow">MOTION / STORY</p><h2>Анимация</h2></div></div>
+    <section id="animation" class="section media-section animation-section">
+      <div class="animation-motion-field" aria-hidden="true"><span class="bone bone-a"></span><span class="bone bone-b"></span><span class="bone bone-c"></span><span class="joint joint-a"></span><span class="joint joint-b"></span><span class="joint joint-c"></span><span class="motion-trail"></span></div>
+      <div class="section-heading reveal"><div><div class="section-index">03 / ANIMATION</div><p class="eyebrow">MOTION / STORY</p><h2>Анимация</h2></div><span class="section-note">RIG · KEYFRAMES · MOTION</span></div>
       <div class="video-list" id="animated-list">
         <a class="video-row reveal" href="https://youtu.be/AefJH32-0jg" target="_blank" rel="noreferrer">
           <span class="video-index">01</span><div class="video-thumb image-thumb"><img src="https://i.ytimg.com/vi/AefJH32-0jg/hqdefault.jpg" alt=""><span>ANIMATED</span></div>
@@ -151,6 +155,7 @@
     </section>
 
     <section id="youtube" class="section youtube-section">
+      <div class="youtube-particle-field" id="youtube-particle-field" aria-hidden="true"></div>
       <div class="section-heading reveal"><div><div class="section-index">05 / YOUTUBE</div><p class="eyebrow">LATEST FROM THE CHANNEL</p><h2>YouTube</h2></div><a class="text-link magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">@paint_pong ↗</a></div>
       <div class="youtube-feature reveal">
         <div class="youtube-copy"><span class="live-chip"><i></i> CHANNEL FEED</span><h3>Последняя работа<br>Paint_Pong</h3><p>Превью, название и ссылка на самый свежий ролик обновляются автоматически через GitHub Actions. Новое видео появится на сайте после ближайшего обновления ленты.</p><a class="btn btn-primary magnetic" href="https://www.youtube.com/@paint_pong" target="_blank" rel="noreferrer">Открыть канал ↗</a></div>

@@ -30,3 +30,7 @@
 
 ### Included audio
 The portfolio now includes the supplied track at `assets/audio/paint-pong-track.mp3`.
+
+
+### Polish update
+Interactive logo tilt + ripple click effect, character selector carousel, animation rig ambience, YouTube motion visualizer, and software/tool stack in About.

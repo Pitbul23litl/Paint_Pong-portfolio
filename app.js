@@ -93,3 +93,67 @@ if(audio){
   audio.addEventListener('error',()=>{if(status)status.textContent='AUDIO FILE READY';});
   drawAudio();
 }
+
+// ---------- interactive hero logo ----------
+const logoStage = document.getElementById('hero-logo-stage');
+const heroLogo = document.getElementById('hero-logo');
+if (logoStage && heroLogo && !prefersReduced) {
+  let raf = 0, targetRX = 0, targetRY = 0, currentRX = 0, currentRY = 0;
+  const moveLogo = (clientX, clientY) => {
+    const r = logoStage.getBoundingClientRect();
+    const x = (clientX - (r.left + r.width/2)) / (r.width/2);
+    const y = (clientY - (r.top + r.height/2)) / (r.height/2);
+    targetRY = x * 8;
+    targetRX = -y * 6;
+    if (!raf) raf = requestAnimationFrame(function animateLogo(){
+      currentRX += (targetRX-currentRX)*.15; currentRY += (targetRY-currentRY)*.15;
+      heroLogo.style.transform = `perspective(900px) rotateX(${currentRX}deg) rotateY(${currentRY}deg)`;
+      if (Math.abs(targetRX-currentRX)+Math.abs(targetRY-currentRY) > .01) raf=requestAnimationFrame(animateLogo); else raf=0;
+    });
+  };
+  logoStage.addEventListener('pointermove', e => moveLogo(e.clientX,e.clientY), {passive:true});
+  logoStage.addEventListener('pointerleave', () => { targetRX=0; targetRY=0; moveLogo(logoStage.getBoundingClientRect().left+logoStage.offsetWidth/2, logoStage.getBoundingClientRect().top+logoStage.offsetHeight/2); });
+  logoStage.addEventListener('click', e => {
+    const r = logoStage.getBoundingClientRect(), layer = logoStage.querySelector('.logo-ripple-layer');
+    if (!layer) return;
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const ring=document.createElement('span'); ring.className='logo-ripple'; ring.style.left=x+'px'; ring.style.top=y+'px'; layer.appendChild(ring);
+    for(let i=0;i<7;i++){const s=document.createElement('span');s.className='logo-splash';s.style.left=x+'px';s.style.top=y+'px';s.style.setProperty('--a',(i*51-80)+'deg');layer.appendChild(s);}
+    setTimeout(()=>layer.replaceChildren(), 950);
+  });
+}
+
+// ---------- character select / fighting-game style carousel ----------
+const characterData = [
+  ['bogle.png','Bogle'],['chacatolo.png','Chacatolo'],["cre'eepstalic.png","Cre'eepstalic"],['knighTss.png','KnighTss'],
+  ['kvaraban.png','Kvaraban'],['panitoor.png','Panitoor'],['werdo.png','Werdo'],["zom'jelly.png","Zom'jelly"]
+];
+const picker=document.getElementById('character-picker');
+const currentImg=document.getElementById('character-current'), prevImg=document.getElementById('character-prev'), nextImg=document.getElementById('character-next');
+const mainLink=document.getElementById('character-main'), indexEl=document.getElementById('character-index'), nameEl=document.getElementById('character-name'), dots=document.getElementById('picker-dots');
+let characterIndex=0;
+function charPath(i){return 'assets/characters/'+encodeURIComponent(characterData[i][0]).replace(/%2F/g,'/').replace(/%27/g,"'");}
+function renderCharacter(i, animate=true){
+  if(!picker)return; characterIndex=(i+characterData.length)%characterData.length;
+  const prev=(characterIndex-1+characterData.length)%characterData.length, next=(characterIndex+1)%characterData.length;
+  currentImg.src=charPath(characterIndex); currentImg.alt=characterData[characterIndex][1]; prevImg.src=charPath(prev); nextImg.src=charPath(next);
+  mainLink.href=charPath(characterIndex); indexEl.textContent=String(characterIndex+1).padStart(2,'0')+' / '+String(characterData.length).padStart(2,'0'); nameEl.textContent=characterData[characterIndex][1];
+  dots?.querySelectorAll('.picker-dot').forEach((d,j)=>d.classList.toggle('active',j===characterIndex));
+  if(animate){picker.classList.remove('switching'); void picker.offsetWidth; picker.classList.add('switching'); setTimeout(()=>picker.classList.remove('switching'),700)}
+}
+if(picker && dots){characterData.forEach((_,i)=>{const b=document.createElement('button');b.className='picker-dot';b.type='button';b.setAttribute('aria-label','Персонаж '+(i+1));b.addEventListener('click',()=>renderCharacter(i));dots.appendChild(b)});renderCharacter(0,false); document.querySelector('.picker-prev')?.addEventListener('click',()=>renderCharacter(characterIndex-1)); document.querySelector('.picker-next')?.addEventListener('click',()=>renderCharacter(characterIndex+1));
+let sx=0; picker.addEventListener('touchstart',e=>{sx=e.changedTouches[0].clientX},{passive:true}); picker.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>45)renderCharacter(characterIndex+(dx<0?1:-1))},{passive:true});
+}
+
+// ---------- animation section: wake the rig when entering viewport ----------
+const animationSection=document.getElementById('animation');
+if(animationSection){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting) animationSection.classList.add('in-view');}),{threshold:.2});io.observe(animationSection)}
+
+// ---------- youtube ambient particles ----------
+const ytField=document.getElementById('youtube-particle-field');
+if(ytField && !prefersReduced){
+  const wave=document.createElement('span'); wave.className='yt-wave'; ytField.appendChild(wave);
+  const count=window.innerWidth<700?12:28;
+  for(let i=0;i<count;i++){const p=document.createElement('span');p.className='yt-particle';p.style.left=(Math.random()*100)+'%';p.style.top=(8+Math.random()*82)+'%';p.style.setProperty('--x',((Math.random()-.5)*90)+'px');p.style.setProperty('--y',((Math.random()-.5)*70)+'px');p.style.setProperty('--d',(4+Math.random()*6)+'s');p.style.animationDelay=(-Math.random()*5)+'s';ytField.appendChild(p)}
+}
+
