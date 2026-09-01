@@ -66,7 +66,7 @@ let audioCtx, analyser, sourceNode, dataArray, vizRAF;
 function setupAudio(){
   if(audioCtx || !audio)return;
   try{
-    audioCtx=new (window.AudioContext||window.webkitAudioContext)(); analyser=audioCtx.createAnalyser(); analyser.fftSize=256; analyser.smoothingTimeConstant=.82; dataArray=new Uint8Array(analyser.frequencyBinCount);
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)(); analyser=audioCtx.createAnalyser(); window.analyser=analyser; analyser.fftSize=256; analyser.smoothingTimeConstant=.82; dataArray=new Uint8Array(analyser.frequencyBinCount); window.dataArray=dataArray;
     sourceNode=audioCtx.createMediaElementSource(audio); sourceNode.connect(analyser); analyser.connect(audioCtx.destination);
     drawAudio();
   }catch(e){status.textContent='AUDIO PLAYER READY';}
@@ -197,3 +197,114 @@ if(langToggle){let lang=localStorage.getItem('paintpong-lang')||'ru';applyLangua
 
 // ---------- biome cursor lens ----------
 document.querySelectorAll('.biome-probe').forEach(card=>card.addEventListener('pointermove',e=>{const r=card.getBoundingClientRect();card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');card.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')},{passive:true}));
+
+// ================= V5 IMMERSIVE EXPERIENCE =================
+(function immersiveUpgrade(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const touch = matchMedia('(pointer: coarse)').matches || innerWidth < 850;
+
+  // Smooth scroll: Lenis + GSAP ScrollTrigger. Touch keeps native scrolling.
+  if (!reduce && !touch && window.Lenis && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    const lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 0.9 });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time)=>lenis.raf(time*1000));
+    gsap.ticker.lagSmoothing(0);
+    window.paintPongLenis = lenis;
+    gsap.utils.toArray('section').forEach((section)=>{
+      gsap.to(section.querySelectorAll('.section-heading,.about-title,.about-text,.character-picker,.video-list,.music-layout,.youtube-feature'),{
+        y: -18, ease:'none', scrollTrigger:{trigger:section,start:'top bottom',end:'bottom top',scrub:1.2}
+      });
+    });
+    const story=document.querySelector('.biome-story');
+    const track=story?.querySelector('.biome-story-track');
+    if(story&&track){
+      const distance=Math.max(0,track.scrollWidth-window.innerWidth*.72);
+      gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{trigger:story,start:'top 80%',end:'bottom 20%',scrub:1,pin:false,onUpdate:self=>{const chapters=[...track.children];chapters.forEach((c,i)=>c.classList.toggle('is-active',Math.abs(i/(chapters.length-1||1)-self.progress)<.18));}}});
+    }
+  }
+
+  // Premium custom cursor with magnetic / PLAY state.
+  if(!touch && !reduce){
+    const cur=document.querySelector('.custom-cursor');
+    if(cur){let x=innerWidth/2,y=innerHeight/2,tx=x,ty=y; const loop=()=>{x+=(tx-x)*.2;y+=(ty-y)*.2;cur.style.transform=`translate3d(${x}px,${y}px,0) translate(-50%,-50%)`;requestAnimationFrame(loop)};loop();
+      addEventListener('pointermove',e=>{tx=e.clientX;ty=e.clientY},{passive:true});
+      document.querySelectorAll('a,button,.magnetic,.character-main').forEach(el=>{el.addEventListener('pointerenter',()=>cur.classList.add('is-hover'));el.addEventListener('pointerleave',()=>cur.classList.remove('is-hover'))});
+      document.querySelectorAll('.video-row,.latest-video-card').forEach(el=>{el.addEventListener('pointerenter',()=>{cur.classList.add('is-play');cur.querySelector('b').textContent='PLAY'});el.addEventListener('pointerleave',()=>cur.classList.remove('is-play'))});
+    }
+  }
+
+  // WebGL procedural background: reacts to audio when the player is active.
+  const bg=document.getElementById('webgl-bg');
+  if(bg && window.THREE && !reduce){
+    const renderer=new THREE.WebGLRenderer({canvas:bg,alpha:true,antialias:true});
+    renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.6)); renderer.setSize(innerWidth,innerHeight,false);
+    const scene=new THREE.Scene(), camera=new THREE.Camera();
+    const uniforms={uTime:{value:0},uBass:{value:.03},uHigh:{value:.02},uRes:{value:new THREE.Vector2(innerWidth,innerHeight)}};
+    const mat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms,vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,1.0);}`,fragmentShader:`
+      varying vec2 vUv; uniform float uTime; uniform float uBass; uniform float uHigh; uniform vec2 uRes;
+      float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);} 
+      float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);} 
+      void main(){vec2 uv=vUv-.5;uv.x*=uRes.x/uRes.y;float t=uTime*.12;float n=noise(uv*3.0+vec2(t,-t*.7));float wave=sin(length(uv)*9.0-uTime*.55+n*3.0);float pulse=smoothstep(.0,.85,uBass)*(.12+.09*sin(uTime*2.0));float d=length(uv+vec2(sin(t*.7)*.08,cos(t*.5)*.05));float glow=exp(-5.0*abs(d-.25-pulse));float orb=exp(-10.0*d*d);vec3 c=vec3(.10,.20,.28)*(0.55+0.45*n)+vec3(.16,.45,.72)*(glow*.35+uHigh*.25)+vec3(.72,.25,.10)*(orb*.08+uBass*.12);float alpha=(.16+glow*.18+orb*.06)+uBass*.08;gl_FragColor=vec4(c,alpha);}`});
+    const plane=new THREE.Mesh(new THREE.PlaneGeometry(2,2),mat); scene.add(plane); camera.position.z=1;
+    const resize=()=>{renderer.setSize(innerWidth,innerHeight,false);uniforms.uRes.value.set(innerWidth,innerHeight)}; addEventListener('resize',resize,{passive:true});
+    const audioEl=document.getElementById('portfolio-audio');
+    function frame(t){uniforms.uTime.value=t*.001; const a=window.__ppAudioData; if(a){uniforms.uBass.value+=(a.bass-uniforms.uBass.value)*.12;uniforms.uHigh.value+=(a.high-uniforms.uHigh.value)*.08;document.body.style.setProperty('--audio-bass',a.bass)} renderer.render(scene,camera);requestAnimationFrame(frame)} requestAnimationFrame(frame);
+  }
+
+  // Couple existing analyser to the background.
+  const originalDraw=window.drawAudio;
+  // The existing audio visualizer remains the source of truth; read its analyser when possible.
+  const audioEl=document.getElementById('portfolio-audio');
+  if(audioEl){
+    const sample=()=>{try{if(window.analyser&&window.dataArray){window.analyser.getByteFrequencyData(window.dataArray);let bass=0,high=0;for(let i=0;i<10;i++)bass+=window.dataArray[i]||0;for(let i=40;i<72;i++)high+=window.dataArray[i]||0;window.__ppAudioData={bass:(bass/10)/255,high:(high/32)/255}}}catch{} requestAnimationFrame(sample)};requestAnimationFrame(sample);
+    audioEl.addEventListener('play',()=>document.body.classList.add('audio-live')); audioEl.addEventListener('pause',()=>document.body.classList.remove('audio-live'));
+  }
+
+  // Optional real Spine Web Components bridge. Activate automatically when exported assets are added.
+  const spineProbe=()=>{
+    const host=document.querySelector('.hero-rig-preview');
+    if(!host || !window.customElements?.get('spine-skeleton')) return;
+    fetch('assets/spine/bogle/bogle.json',{method:'HEAD'}).then(r=>{
+      if(!r.ok) return;
+      const el=document.createElement('spine-skeleton');
+      el.setAttribute('skeleton','assets/spine/bogle/bogle.json');
+      el.setAttribute('atlas','assets/spine/bogle/bogle.atlas');
+      el.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
+      host.prepend(el);
+      const legacy=host.querySelector('#rig-preview-canvas'); if(legacy) legacy.style.display='none';
+      const caption=host.querySelector('.rig-caption'); if(caption) caption.innerHTML='<span>SPINE WEBGL</span><b>LIVE RIG</b>';
+    }).catch(()=>{});
+  };
+  spineProbe();
+
+  // Procedural "rigged" hero character preview. Uses the actual Bogle PNG while the
+  // overlay bones demonstrate cursor tracking; a true Spine Web Player needs exported
+  // .json/.atlas assets, which are not part of the current portfolio archive.
+  const rig=document.getElementById('rig-preview-canvas');
+  if(rig && !reduce){
+    const ctx=rig.getContext('2d'); const img=new Image(); img.src="assets/characters/bogle.png";
+    let mx=.5,my=.45,t=0; addEventListener('pointermove',e=>{mx=Math.max(0,Math.min(1,e.clientX/innerWidth));my=Math.max(0,Math.min(1,e.clientY/innerHeight))},{passive:true});
+    const draw=()=>{const r=rig.getBoundingClientRect();const d=Math.min(devicePixelRatio||1,1.6);rig.width=Math.max(1,Math.floor(r.width*d));rig.height=Math.max(1,Math.floor(r.height*d));ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,r.width,r.height);t+=.016;if(img.complete){const scale=Math.min(r.width/img.width*1.0,r.height/img.height*1.0);const iw=img.width*scale*.72,ih=img.height*scale*.72;const ix=r.width*.5-iw*.5+(mx-.5)*16;const iy=r.height*.5-ih*.45+(my-.5)*10;ctx.globalAlpha=.10;ctx.drawImage(img,ix,iy,iw,ih);ctx.globalAlpha=1;}
+      const cx=r.width*.5+(mx-.5)*24,cy=r.height*.45+(my-.5)*16; const head={x:cx+Math.sin(t*1.2)*8,y:cy-58}; const spine={x:cx,y:cy+5}; const hip={x:cx-4,y:cy+48}; const lHand={x:cx-75-(mx-.5)*25,y:cy+5+(my-.5)*35}; const rHand={x:cx+75+(mx-.5)*25,y:cy-10+(my-.5)*35}; const lFoot={x:cx-38,y:cy+114}; const rFoot={x:cx+40,y:cy+114};
+      ctx.lineWidth=2;ctx.strokeStyle='rgba(75,180,255,.65)';ctx.shadowColor='rgba(75,180,255,.55)';ctx.shadowBlur=12;[[head,spine],[spine,hip],[spine,lHand],[spine,rHand],[hip,lFoot],[hip,rFoot]].forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()});ctx.shadowBlur=0;[head,spine,hip,lHand,rHand,lFoot,rFoot].forEach((p,i)=>{ctx.beginPath();ctx.fillStyle=i===0?'rgba(216,122,57,.95)':'rgba(255,255,255,.7)';ctx.arc(p.x,p.y,i===0?7:4,0,Math.PI*2);ctx.fill()});
+      requestAnimationFrame(draw)};draw();
+  }
+
+  // Matter.js physical tool tags in About.
+  const toolsCanvas=document.getElementById('matter-tools');
+  if(toolsCanvas && window.Matter && !reduce){
+    const {Engine,Render,Runner,Bodies,Composite,Mouse,MouseConstraint} = Matter;
+    const wrap=toolsCanvas.parentElement; const resize=()=>{const r=wrap.getBoundingClientRect();toolsCanvas.width=r.width;toolsCanvas.height=r.height};resize();addEventListener('resize',resize,{passive:true});
+    const engine=Engine.create(); engine.gravity.y=.95;
+    const render=Render.create({canvas:toolsCanvas,engine,options:{width:toolsCanvas.width,height:toolsCanvas.height,wireframes:false,background:'transparent',pixelRatio:devicePixelRatio||1}});
+    const labels=['FL Studio','Photoshop','Spine 2D','Moho','Blender','DaVinci'];
+    const bodies=labels.map((label,i)=>{const w=88+(i%3)*14,h=30;const b=Bodies.rectangle(90+i*125,20+i*8,w,h,{restitution:.74,friction:.02,render:{fillStyle:'rgba(12,18,24,.72)',strokeStyle:'rgba(255,255,255,.14)',lineWidth:1}});b.label=label;return b});
+    const ground=Bodies.rectangle(toolsCanvas.width/2,toolsCanvas.height+14,toolsCanvas.width,28,{isStatic:true,render:{fillStyle:'rgba(255,255,255,.02)'}});Composite.add(engine,[ground,...bodies]);
+    const mouse=Mouse.create(toolsCanvas),mc=MouseConstraint.create(engine,{mouse,constraint:{stiffness:.16,render:{visible:false}}});Composite.add(engine,mc);Render.run(render);Runner.run(Runner.create(),engine);
+    Matter.Events.on(render,'afterRender',()=>{const c=render.context; c.save(); c.font='700 9px Space Grotesk'; c.textAlign='center'; c.textBaseline='middle'; bodies.forEach(b=>{c.fillStyle='rgba(255,255,255,.74)';c.fillText(b.label,b.position.x,b.position.y+1)}); c.restore();});
+  }
+
+  // Lightweight liquid interaction on project thumbnails.
+  if(!reduce){document.querySelectorAll('.image-thumb,.latest-media,.biome-probe').forEach(el=>{el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();const x=e.clientX-r.left,y=e.clientY-r.top;el.style.setProperty('--hx',(x/r.width*100)+'%');el.style.setProperty('--hy',(y/r.height*100)+'%');el.style.setProperty('--lx',((x/r.width)-.5)*12+'px');el.style.setProperty('--ly',((y/r.height)-.5)*12+'px');el.classList.add('liquid-hover')},{passive:true});el.addEventListener('pointerleave',()=>el.classList.remove('liquid-hover'))})}
+})();

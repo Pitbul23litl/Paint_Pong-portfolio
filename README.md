@@ -34,3 +34,6 @@ The portfolio now includes the supplied track at `assets/audio/paint-pong-track.
 
 ### Polish update
 Interactive logo tilt + ripple click effect, character selector carousel, animation rig ambience, YouTube motion visualizer, and software/tool stack in About.
+
+## V5 immersive layer
+This version adds GSAP + ScrollTrigger + Lenis smooth motion on desktop, a Three.js GLSL ambient layer with audio-reactive bass/high-frequency input, Matter.js physics for tool tags, a magnetic custom cursor, liquid-style hover interactions, and an optional Spine Web Components bridge. The real Spine player becomes active automatically when `assets/spine/bogle/bogle.json` and `bogle.atlas` are added; the current archive contains only PNG character art, so the visible hero rig is a procedural preview rather than a fabricated Spine skeleton.

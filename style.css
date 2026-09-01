@@ -206,3 +206,40 @@ body.js-ready .reveal.in{opacity:1;transform:none}
 @keyframes hudMeter{to{left:130%}}
 
 @media(max-width:650px){.header-tools{gap:6px}.lang-toggle{font-size:8px}.lang-toggle span{padding:6px 7px}.biome-probe:before{inset:8px}.biome-hud{top:48px;right:12px}.biome-corner{top:11px;left:12px}.biome-reticle{top:10px;right:12px}.biome-probe:hover img{transform:scale(1.05)}}
+
+/* ===== V5 / IMMERSIVE WEBGL LAYER ===== */
+:root{--cyan:#4bb4ff;--ember:#d87a39;--ink:#08090c}
+html.lenis{height:auto}.lenis.lenis-smooth{scroll-behavior:auto!important}.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}.lenis.lenis-stopped{overflow:hidden}
+body{cursor:none}.site-header,.cursor-glow,.logo-stage,.btn,.nav-link,.magnetic,a,button{cursor:none}
+#webgl-bg{position:fixed;inset:0;width:100%;height:100%;z-index:-8;pointer-events:none;opacity:.82;mix-blend-mode:screen}
+.ambient-field{z-index:-9}
+.custom-cursor{position:fixed;left:0;top:0;width:22px;height:22px;border:1px solid rgba(255,255,255,.72);border-radius:50%;z-index:9999;pointer-events:none;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .3s ease,height .3s ease,border-color .3s ease,background .3s ease;display:flex;align-items:center;justify-content:center}
+.custom-cursor:before,.custom-cursor:after{content:"";position:absolute;background:currentColor;opacity:.8}.custom-cursor:before{width:1px;height:34px}.custom-cursor:after{width:34px;height:1px}.custom-cursor span{width:4px;height:4px;border-radius:50%;background:#fff;box-shadow:0 0 14px #fff}.custom-cursor b{position:absolute;left:18px;top:-10px;font:700 7px 'Space Grotesk';letter-spacing:.16em;color:#fff;opacity:0;white-space:nowrap;transform:translateY(5px);transition:.25s ease}.custom-cursor.is-hover{width:38px;height:38px;background:rgba(255,255,255,.06);border-color:rgba(75,180,255,.85)}.custom-cursor.is-hover b{opacity:.9;transform:none}.custom-cursor.is-play{width:66px;height:66px;border-color:rgba(255,255,255,.88);background:rgba(8,9,12,.28);backdrop-filter:blur(6px)}.custom-cursor.is-play b{opacity:1;transform:none;left:50%;top:50%;translate:-50% -50%;font-size:8px}.custom-cursor.is-play span,.custom-cursor.is-play:before,.custom-cursor.is-play:after{display:none}
+
+/* ===== Hero rig preview ===== */
+.hero-rig-preview{position:absolute;inset:10% 8% 12%;z-index:0;pointer-events:none;opacity:.88;mix-blend-mode:screen}.hero-rig-preview canvas{position:absolute;inset:0;width:100%;height:100%}.rig-caption{position:absolute;right:6%;bottom:3%;display:grid;gap:3px;text-align:right;font-family:'Space Grotesk';text-transform:uppercase}.rig-caption span{font-size:8px;letter-spacing:.22em;color:rgba(255,255,255,.42)}.rig-caption b{font-size:9px;letter-spacing:.16em;color:rgba(75,180,255,.76)}
+.hero-art .logo-stage{z-index:3}.hero-art .art-ring{z-index:1}
+
+/* ===== Scroll-linked premium motion ===== */
+.section{--scroll-progress:0}.section-heading,.about-title,.about-text,.character-picker,.biome-grid,.video-list,.music-layout,.youtube-feature{will-change:transform}
+.biome-story{position:relative;height:38vh;min-height:280px;margin:5rem 0 2rem;overflow:hidden;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center}.biome-story:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(75,180,255,.08),transparent 40%),linear-gradient(90deg,transparent,rgba(255,255,255,.03) 50%,transparent)}.biome-story-track{display:flex;gap:9vw;align-items:center;padding:0 14vw;transform:translate3d(var(--story-x,0px),0,0);will-change:transform}.biome-chapter{min-width:38vw;padding:30px;border-left:1px solid rgba(255,255,255,.11);display:grid;gap:8px;opacity:.42;transform:scale(.92);transition:opacity .5s ease,transform .5s ease}.biome-chapter.is-active{opacity:1;transform:scale(1)}.biome-chapter span{font:700 9px 'Space Grotesk';letter-spacing:.22em;color:#7f8791}.biome-chapter strong{font:700 clamp(38px,6vw,86px) 'Space Grotesk';letter-spacing:-.06em;color:#fff}.biome-chapter em{font:500 11px 'Space Grotesk';letter-spacing:.18em;color:rgba(75,180,255,.72);font-style:normal}
+
+/* ===== Liquid hover treatment ===== */
+.image-thumb,.latest-media,.biome-probe{overflow:hidden}.image-thumb:after,.latest-media:after,.biome-probe:after{transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .35s ease}.image-thumb img,.latest-media img,.biome-probe img{will-change:transform,filter;transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .8s ease}.liquid-hover img{transform:scale(1.08) translate3d(var(--lx,0px),var(--ly,0px),0);filter:saturate(1.16) contrast(1.08) blur(.1px)}.liquid-hover:before{content:"";position:absolute;inset:-20%;z-index:3;pointer-events:none;background:radial-gradient(circle at var(--hx,50%) var(--hy,50%),rgba(255,255,255,.16),transparent 18%);mix-blend-mode:screen;transform:translate3d(calc(var(--lx,0px)*.35),calc(var(--ly,0px)*.35),0);transition:.25s ease}.liquid-hover{filter:drop-shadow(0 16px 42px rgba(0,0,0,.22))}
+
+/* ===== Physics tools ===== */
+.physics-tools{position:relative;height:190px;margin:22px 0 10px;border:1px solid rgba(255,255,255,.08);border-radius:24px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}.physics-tools canvas{position:absolute;inset:0;width:100%;height:100%}.physics-label{position:absolute;left:16px;top:14px;font:700 8px 'Space Grotesk';letter-spacing:.18em;color:rgba(255,255,255,.4);z-index:2}
+
+/* ===== Animation rig burst ===== */
+.animation-section .animation-motion-field{transform:translateZ(0);filter:drop-shadow(0 0 18px rgba(75,180,255,.08))}.animation-section.in-view .bone{animation-duration:2.2s}.animation-section.in-view:after{content:"";position:absolute;inset:10% 4%;border:1px solid rgba(75,180,255,.06);border-radius:28px;pointer-events:none;animation:rigFrame 4s ease-in-out infinite}.animation-section.in-view .motion-trail{animation-duration:2.6s}
+@keyframes rigFrame{50%{transform:scale(.985);opacity:.45;box-shadow:0 0 80px rgba(75,180,255,.04)}}
+
+/* ===== WebGL/audio state ===== */
+body.audio-live .hero-bg-orbit{animation-duration:7s}.audio-live .ambient-field{opacity:.55}.audio-live .vinyl-panel{box-shadow:0 0 calc(32px + var(--audio-bass,0)*40px) rgba(75,180,255,.08)}
+
+@media (max-width:850px){body{cursor:auto}.custom-cursor{display:none}.site-header,.cursor-glow{cursor:auto}#webgl-bg{opacity:.46}.hero-rig-preview{inset:16% 4% 14%;opacity:.54}.biome-story{height:32vh;min-height:230px}.biome-story-track{padding:0 10vw;gap:10vw}.biome-chapter{min-width:72vw}.physics-tools{height:160px}.image-thumb img,.latest-media img,.biome-probe img{transition:transform .55s ease,filter .55s ease}.liquid-hover img{transform:scale(1.045)}}
+@media (prefers-reduced-motion:reduce){#webgl-bg,.hero-rig-preview,.biome-story-track,.custom-cursor{display:none}.biome-chapter{opacity:1;transform:none!important}.physics-tools{display:none}}
+
+/* V5 stacking / touch-safe refinements */
+#webgl-bg{z-index:0}.ambient-field{z-index:1}.site-header{z-index:20}main,.footer{position:relative;z-index:2}.scroll-progress{z-index:30}body:before{z-index:40}.custom-cursor{z-index:60}.hero{isolation:isolate}.hero-rig-preview{z-index:0}.hero-copy,.hero-art .logo-stage,.hero-art .art-ring,.hero-art .floating-label,.hero-art .signal-card{position:relative;z-index:3}.physics-tools{isolation:isolate}
+@media(max-width:850px){.biome-story{overflow-x:auto;scrollbar-width:none}.biome-story::-webkit-scrollbar{display:none}.biome-story-track{transform:none!important;width:max-content}.biome-chapter{min-width:78vw}.site-header{z-index:50}}
