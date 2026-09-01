@@ -261,3 +261,17 @@ body.audio-live .hero-bg-orbit{animation-duration:7s}.audio-live .ambient-field{
 .spine-player-frame.spine-error #bogle-spine-player:after{content:"SPINE RUNTIME COULD NOT LOAD";position:absolute;inset:0;display:grid;place-items:center;font:700 10px 'Space Grotesk';letter-spacing:.16em;color:#72757d}
 @media(max-width:1000px){.animation-showcase{grid-template-columns:1fr}.spine-player-frame{min-height:410px}}
 @media(max-width:650px){.animation-showcase{gap:18px}.spine-player-frame{min-height:390px;border-radius:17px}.spine-player-label{left:14px;right:14px;top:14px}.spine-player-footer{left:14px;right:14px;bottom:14px}}
+
+/* ---------- V5.2 HERO / SPINE FIX ---------- */
+.hero{min-height:calc(100vh - 28px);align-items:start;padding-top:105px;padding-bottom:70px}
+.hero-copy{align-self:start;padding-top:22px}
+.hero-art{min-height:0;height:560px;align-self:start;align-items:start;padding-top:0}
+.hero-art .logo-stage{margin-top:0;width:min(560px,92%);place-self:start center}
+.hero-art .art-ring{top:40px}
+@media(max-width:1000px){.hero{padding-top:105px;align-items:start}.hero-art{height:500px;margin-top:20px;align-items:start}.hero-art .logo-stage{width:min(520px,92%);place-self:start center}}
+@media(max-width:650px){.hero{min-height:auto;padding-top:95px;padding-bottom:55px}.hero-copy{padding-top:10px}.hero-art{height:390px;margin-top:5px}.hero-art .logo-stage{width:min(390px,94%)}.hero-art .art-ring{top:15px}}
+
+/* The Spine 3.8 export references its atlas page as pultablous.png. */
+#bogle-spine-player{min-height:360px}
+#bogle-spine-player canvas{display:block}
+.spine-player-frame.spine-ready{background:radial-gradient(circle at 50% 50%,rgba(22,131,218,.16),transparent 48%),linear-gradient(145deg,rgba(255,255,255,.025),rgba(255,255,255,.008))}
