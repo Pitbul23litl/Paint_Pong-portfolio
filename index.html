@@ -65,10 +65,6 @@
         </div>
       </div>
       <div class="hero-art reveal reveal-delay">
-        <div class="hero-rig-preview" aria-hidden="true">
-          <canvas id="rig-preview-canvas"></canvas>
-          <div class="rig-caption"><span>RIG PREVIEW</span><b>CURSOR TRACK</b></div>
-        </div>
         <div class="art-ring ring-1"></div><div class="art-ring ring-2"></div><div class="art-ring ring-3"></div>
         <div class="logo-stage float" id="hero-logo-stage" aria-label="Paint_Pong logo — интерактивный">
           <span class="logo-ripple-layer"></span>
@@ -153,7 +149,13 @@
     <section id="animation" class="section media-section animation-section">
       <div class="animation-motion-field" aria-hidden="true"><span class="bone bone-a"></span><span class="bone bone-b"></span><span class="bone bone-c"></span><span class="joint joint-a"></span><span class="joint joint-b"></span><span class="joint joint-c"></span><span class="motion-trail"></span></div>
       <div class="section-heading reveal"><div><div class="section-index">03 / ANIMATION</div><p class="eyebrow" data-i18n="animation.eyebrow">MOTION / STORY</p><h2 data-i18n="animation.title">Анимация</h2></div><span class="section-note">RIG · KEYFRAMES · MOTION</span></div>
-      <div class="video-list" id="animated-list">
+      <div class="animation-showcase">
+        <div class="spine-player-frame reveal" id="bogle-spine-frame">
+          <div class="spine-player-label"><span>SPINE 2D / WEBGL</span><b>IDLE LOOP</b></div>
+          <div id="bogle-spine-player" aria-label="Bogle Spine animation"></div>
+          <div class="spine-player-footer"><span>Bogle</span><small>RUNTIME · 3.8</small></div>
+        </div>
+        <div class="video-list" id="animated-list">
         <a class="video-row reveal" href="https://youtu.be/AefJH32-0jg" target="_blank" rel="noreferrer">
           <span class="video-index">01</span><div class="video-thumb image-thumb"><img src="https://i.ytimg.com/vi/AefJH32-0jg/hqdefault.jpg" alt=""><span>ANIMATED</span></div>
           <div class="video-meta"><h3>Poison Islet — Auglur &amp; Dragong</h3><p>MSM (Fanmade)</p></div><span class="video-arrow">↗</span>
@@ -166,6 +168,7 @@
           <span class="video-index">03</span><div class="video-thumb image-thumb"><img src="https://i.ytimg.com/vi/KyliP7R9RaM/hqdefault.jpg" alt=""><span>ANIMATED</span></div>
           <div class="video-meta"><h3>Poison Islet — Fung Pray, Blarret &amp; Bass</h3><p>MSM (Fanmade)</p></div><span class="video-arrow">↗</span>
         </a>
+        </div>
       </div>
     </section>
 
@@ -217,7 +220,7 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/matter-js@0.20.0/build/matter.min.js"></script>
-  <script src="https://unpkg.com/@esotericsoftware/spine-webcomponents@4.2.*/dist/iife/spine-webcomponents.min.js"></script>
+  <script src="https://esotericsoftware.com/files/spine-player/3.8/spine-player.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

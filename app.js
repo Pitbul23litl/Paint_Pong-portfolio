@@ -261,34 +261,31 @@ document.querySelectorAll('.biome-probe').forEach(card=>card.addEventListener('p
     audioEl.addEventListener('play',()=>document.body.classList.add('audio-live')); audioEl.addEventListener('pause',()=>document.body.classList.remove('audio-live'));
   }
 
-  // Optional real Spine Web Components bridge. Activate automatically when exported assets are added.
-  const spineProbe=()=>{
-    const host=document.querySelector('.hero-rig-preview');
-    if(!host || !window.customElements?.get('spine-skeleton')) return;
-    fetch('assets/spine/bogle/bogle.json',{method:'HEAD'}).then(r=>{
-      if(!r.ok) return;
-      const el=document.createElement('spine-skeleton');
-      el.setAttribute('skeleton','assets/spine/bogle/bogle.json');
-      el.setAttribute('atlas','assets/spine/bogle/bogle.atlas');
-      el.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
-      host.prepend(el);
-      const legacy=host.querySelector('#rig-preview-canvas'); if(legacy) legacy.style.display='none';
-      const caption=host.querySelector('.rig-caption'); if(caption) caption.innerHTML='<span>SPINE WEBGL</span><b>LIVE RIG</b>';
-    }).catch(()=>{});
-  };
-  spineProbe();
-
-  // Procedural "rigged" hero character preview. Uses the actual Bogle PNG while the
-  // overlay bones demonstrate cursor tracking; a true Spine Web Player needs exported
-  // .json/.atlas assets, which are not part of the current portfolio archive.
-  const rig=document.getElementById('rig-preview-canvas');
-  if(rig && !reduce){
-    const ctx=rig.getContext('2d'); const img=new Image(); img.src="assets/characters/bogle.png";
-    let mx=.5,my=.45,t=0; addEventListener('pointermove',e=>{mx=Math.max(0,Math.min(1,e.clientX/innerWidth));my=Math.max(0,Math.min(1,e.clientY/innerHeight))},{passive:true});
-    const draw=()=>{const r=rig.getBoundingClientRect();const d=Math.min(devicePixelRatio||1,1.6);rig.width=Math.max(1,Math.floor(r.width*d));rig.height=Math.max(1,Math.floor(r.height*d));ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,r.width,r.height);t+=.016;if(img.complete){const scale=Math.min(r.width/img.width*1.0,r.height/img.height*1.0);const iw=img.width*scale*.72,ih=img.height*scale*.72;const ix=r.width*.5-iw*.5+(mx-.5)*16;const iy=r.height*.5-ih*.45+(my-.5)*10;ctx.globalAlpha=.10;ctx.drawImage(img,ix,iy,iw,ih);ctx.globalAlpha=1;}
-      const cx=r.width*.5+(mx-.5)*24,cy=r.height*.45+(my-.5)*16; const head={x:cx+Math.sin(t*1.2)*8,y:cy-58}; const spine={x:cx,y:cy+5}; const hip={x:cx-4,y:cy+48}; const lHand={x:cx-75-(mx-.5)*25,y:cy+5+(my-.5)*35}; const rHand={x:cx+75+(mx-.5)*25,y:cy-10+(my-.5)*35}; const lFoot={x:cx-38,y:cy+114}; const rFoot={x:cx+40,y:cy+114};
-      ctx.lineWidth=2;ctx.strokeStyle='rgba(75,180,255,.65)';ctx.shadowColor='rgba(75,180,255,.55)';ctx.shadowBlur=12;[[head,spine],[spine,hip],[spine,lHand],[spine,rHand],[hip,lFoot],[hip,rFoot]].forEach(([a,b])=>{ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()});ctx.shadowBlur=0;[head,spine,hip,lHand,rHand,lFoot,rFoot].forEach((p,i)=>{ctx.beginPath();ctx.fillStyle=i===0?'rgba(216,122,57,.95)':'rgba(255,255,255,.7)';ctx.arc(p.x,p.y,i===0?7:4,0,Math.PI*2);ctx.fill()});
-      requestAnimationFrame(draw)};draw();
+  // Real Spine 3.8 Web Player. The uploaded Bogle export declares Spine 3.8.75,
+  // so the matching 3.8 runtime is used and the idle animation is selected.
+  const spineHost=document.getElementById('bogle-spine-player');
+  if(spineHost && window.spine?.SpinePlayer){
+    try{
+      new spine.SpinePlayer('bogle-spine-player',{
+        jsonUrl:'assets/spine/bogle/bogle.json',
+        atlasUrl:'assets/spine/bogle/bogle.atlas',
+        animation:'idle',
+        loop:true,
+        showControls:false,
+        alpha:true,
+        backgroundColor:'transparent',
+        preserveViewport:true,
+        viewport:{x:-180,y:-120,width:360,height:500},
+        success:function(player){
+          document.getElementById('bogle-spine-frame')?.classList.add('spine-ready');
+        },
+        error:function(){
+          document.getElementById('bogle-spine-frame')?.classList.add('spine-error');
+        }
+      });
+    }catch(e){
+      document.getElementById('bogle-spine-frame')?.classList.add('spine-error');
+    }
   }
 
   // Matter.js physical tool tags in About.
